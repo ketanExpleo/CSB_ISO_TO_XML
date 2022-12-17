@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions name="Service1" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://tempuri.org/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata">
+	<wsp:Policy wsu:Id="BasicHttpsBinding_IService1_policy">
+		<wsp:ExactlyOne>
+			<wsp:All>
+				<sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+					<wsp:Policy>
+						<sp:TransportToken>
+							<wsp:Policy>
+								<sp:HttpsToken RequireClientCertificate="false"/>
+							</wsp:Policy>
+						</sp:TransportToken>
+						<sp:AlgorithmSuite>
+							<wsp:Policy>
+								<sp:Basic256/>
+							</wsp:Policy>
+						</sp:AlgorithmSuite>
+						<sp:Layout>
+							<wsp:Policy>
+								<sp:Strict/>
+							</wsp:Policy>
+						</sp:Layout>
+					</wsp:Policy>
+				</sp:TransportBinding>
+			</wsp:All>
+		</wsp:ExactlyOne>
+	</wsp:Policy>
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://tempuri.org/Imports">
+			<xsd:import schemaLocation="https://10.230.0.2:9443/Service1.svc?xsd=xsd0" namespace="http://tempuri.org/"/>
+			<xsd:import schemaLocation="https://10.230.0.2:9443/Service1.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="IService1_AEPS_Aadhaar_Transaction_InputMessage">
+		<wsdl:part name="parameters" element="tns:AEPS_Aadhaar_Transaction"/>
+	</wsdl:message>
+	<wsdl:message name="IService1_AEPS_Aadhaar_Transaction_OutputMessage">
+		<wsdl:part name="parameters" element="tns:AEPS_Aadhaar_TransactionResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IService1_AEPS_ATMCard_Transaction_InputMessage">
+		<wsdl:part name="parameters" element="tns:AEPS_ATMCard_Transaction"/>
+	</wsdl:message>
+	<wsdl:message name="IService1_AEPS_ATMCard_Transaction_OutputMessage">
+		<wsdl:part name="parameters" element="tns:AEPS_ATMCard_TransactionResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IService1_GenerateAadhaarRefID_InputMessage">
+		<wsdl:part name="parameters" element="tns:GenerateAadhaarRefID"/>
+	</wsdl:message>
+	<wsdl:message name="IService1_GenerateAadhaarRefID_OutputMessage">
+		<wsdl:part name="parameters" element="tns:GenerateAadhaarRefIDResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IService1_GenerateAadhaarRefIDForAadhaaar_InputMessage">
+		<wsdl:part name="parameters" element="tns:GenerateAadhaarRefIDForAadhaaar"/>
+	</wsdl:message>
+	<wsdl:message name="IService1_GenerateAadhaarRefIDForAadhaaar_OutputMessage">
+		<wsdl:part name="parameters" element="tns:GenerateAadhaarRefIDForAadhaaarResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IService1_SMSProcess_InputMessage">
+		<wsdl:part name="parameters" element="tns:SMSProcess"/>
+	</wsdl:message>
+	<wsdl:message name="IService1_SMSProcess_OutputMessage">
+		<wsdl:part name="parameters" element="tns:SMSProcessResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="IService1">
+		<wsdl:operation name="AEPS_Aadhaar_Transaction">
+			<wsdl:input wsaw:Action="http://tempuri.org/IService1/AEPS_Aadhaar_Transaction" message="tns:IService1_AEPS_Aadhaar_Transaction_InputMessage"/>
+			<wsdl:output wsaw:Action="http://tempuri.org/IService1/AEPS_Aadhaar_TransactionResponse" message="tns:IService1_AEPS_Aadhaar_Transaction_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="AEPS_ATMCard_Transaction">
+			<wsdl:input wsaw:Action="http://tempuri.org/IService1/AEPS_ATMCard_Transaction" message="tns:IService1_AEPS_ATMCard_Transaction_InputMessage"/>
+			<wsdl:output wsaw:Action="http://tempuri.org/IService1/AEPS_ATMCard_TransactionResponse" message="tns:IService1_AEPS_ATMCard_Transaction_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GenerateAadhaarRefID">
+			<wsdl:input wsaw:Action="http://tempuri.org/IService1/GenerateAadhaarRefID" message="tns:IService1_GenerateAadhaarRefID_InputMessage"/>
+			<wsdl:output wsaw:Action="http://tempuri.org/IService1/GenerateAadhaarRefIDResponse" message="tns:IService1_GenerateAadhaarRefID_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GenerateAadhaarRefIDForAadhaaar">
+			<wsdl:input wsaw:Action="http://tempuri.org/IService1/GenerateAadhaarRefIDForAadhaaar" message="tns:IService1_GenerateAadhaarRefIDForAadhaaar_InputMessage"/>
+			<wsdl:output wsaw:Action="http://tempuri.org/IService1/GenerateAadhaarRefIDForAadhaaarResponse" message="tns:IService1_GenerateAadhaarRefIDForAadhaaar_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="SMSProcess">
+			<wsdl:input wsaw:Action="http://tempuri.org/IService1/SMSProcess" message="tns:IService1_SMSProcess_InputMessage"/>
+			<wsdl:output wsaw:Action="http://tempuri.org/IService1/SMSProcessResponse" message="tns:IService1_SMSProcess_OutputMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="BasicHttpBinding_IService1" type="tns:IService1">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="AEPS_Aadhaar_Transaction">
+			<soap:operation soapAction="http://tempuri.org/IService1/AEPS_Aadhaar_Transaction" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="AEPS_ATMCard_Transaction">
+			<soap:operation soapAction="http://tempuri.org/IService1/AEPS_ATMCard_Transaction" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GenerateAadhaarRefID">
+			<soap:operation soapAction="http://tempuri.org/IService1/GenerateAadhaarRefID" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GenerateAadhaarRefIDForAadhaaar">
+			<soap:operation soapAction="http://tempuri.org/IService1/GenerateAadhaarRefIDForAadhaaar" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="SMSProcess">
+			<soap:operation soapAction="http://tempuri.org/IService1/SMSProcess" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:binding name="BasicHttpsBinding_IService1" type="tns:IService1">
+		<wsp:PolicyReference URI="#BasicHttpsBinding_IService1_policy"/>
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="AEPS_Aadhaar_Transaction">
+			<soap:operation soapAction="http://tempuri.org/IService1/AEPS_Aadhaar_Transaction" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="AEPS_ATMCard_Transaction">
+			<soap:operation soapAction="http://tempuri.org/IService1/AEPS_ATMCard_Transaction" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GenerateAadhaarRefID">
+			<soap:operation soapAction="http://tempuri.org/IService1/GenerateAadhaarRefID" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GenerateAadhaarRefIDForAadhaaar">
+			<soap:operation soapAction="http://tempuri.org/IService1/GenerateAadhaarRefIDForAadhaaar" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="SMSProcess">
+			<soap:operation soapAction="http://tempuri.org/IService1/SMSProcess" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="Service1">
+		<wsdl:port name="BasicHttpBinding_IService1" binding="tns:BasicHttpBinding_IService1">
+			<soap:address location="http://csbpuonline02.csb.dom:8044/Service1.svc"/>
+		</wsdl:port>
+		<wsdl:port name="BasicHttpsBinding_IService1" binding="tns:BasicHttpsBinding_IService1">
+			<soap:address location="https://10.230.0.2:9443/Service1.svc"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

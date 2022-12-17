@@ -1,0 +1,172 @@
+{"properties": [
+  {
+    "name": "acquirer.port",
+    "type": "java.lang.Integer",
+    "description": "A description for 'acquirer.port'"
+  },
+  {
+    "name": "hearbeat.fixedDelay",
+    "type": "java.lang.Integer",
+    "description": "A description for 'hearbeat.fixedDelay'"
+  },
+  {
+    "name": "hearbeat.initialDelay",
+    "type": "java.lang.Integer",
+    "description": "A description for 'hearbeat.initialDelay'"
+  },
+  {
+    "name": "heartbeat.enabled",
+    "type": "java.lang.Boolean",
+    "description": "A description for 'heartbeat.enabled'"
+  },
+  {
+    "name": "cbs.baseurl",
+    "type": "java.lang.String",
+    "description": "A description for 'cbs.baseurl'"
+  },
+  {
+    "name": "cbs.connectTimeout",
+    "type": "java.lang.Integer",
+    "description": "A description for 'cbs.connectTimeout'"
+  },
+  {
+    "name": "cbs.readTimeout",
+    "type": "java.lang.Integer",
+    "description": "A description for 'cbs.readTimeout'"
+  },
+  {
+    "name": "cbs.type",
+    "type": "java.lang.String",
+    "description": "A description for 'cbs.type'"
+  },
+  {
+    "name": "participationCode",
+    "type": "java.lang.String",
+    "description": "A description for 'participationCode'"
+  },
+  {
+    "name": "orgId",
+    "type": "java.lang.String",
+    "description": "A description for 'orgId'"
+  },
+  {
+    "name": "product.version",
+    "type": "java.lang.String",
+    "description": "A description for 'product.version'"
+  },
+  {
+    "name": "iin",
+    "type": "java.lang.Integer",
+    "description": "A description for 'IIN'"
+  },
+  {
+    "name": "bank.mmid",
+    "type": "java.lang.Integer",
+    "description": "A description for 'bank.mmid'"
+  },
+  {
+    "name": "npci.baseurl",
+    "type": "java.lang.String",
+    "description": "A description for 'npci.baseurl'"
+  },
+  {
+    "name": "npci.connectTimeout",
+    "type": "java.lang.Integer",
+    "description": "A description for 'npci.connectTimeout'"
+  },
+  {
+    "name": "npci.readTimeout",
+    "type": "java.lang.Integer",
+    "description": "A description for 'npci.readTimeout'"
+  },
+  {
+    "name": "npci.signer.certificate.location",
+    "type": "java.lang.String",
+    "description": "A description for 'npci.signer.certificate.location'"
+  },
+  {
+    "name": "server.http.port",
+    "type": "java.lang.Integer",
+    "description": "A description for 'server.http.port'"
+  },
+  {
+    "name": "signer.alias",
+    "type": "java.lang.String",
+    "description": "A description for 'signer.alias'"
+  },
+  {
+    "name": "signer.keystore.location",
+    "type": "java.lang.String",
+    "description": "A description for 'signer.keystore.location'"
+  },
+  {
+    "name": "signer.keystore.password",
+    "type": "java.lang.String",
+    "description": "A description for 'signer.keystore.password'"
+  },
+  {
+    "name": "uidai.ac",
+    "type": "java.lang.String",
+    "description": "A description for 'uidai.ac'"
+  },
+  {
+    "name": "uidai.sa",
+    "type": "java.lang.String",
+    "description": "A description for 'uidai.sa'"
+  },
+  {
+    "name": "uidai.lk",
+    "type": "java.lang.String",
+    "description": "A description for 'uidai.lk'"
+  },
+  {
+    "name": "uidai.rc",
+    "type": "java.lang.String",
+    "description": "A description for 'uidai.rc'"
+  },
+  {
+    "name": "uidai.tid",
+    "type": "java.lang.String",
+    "description": "A description for 'uidai.tid'"
+  },
+  {
+    "name": "uidai.ver",
+    "type": "java.lang.Double",
+    "description": "A description for 'uidai.ver'"
+  },
+  {
+    "name": "microatm_cbs.acquirer.port",
+    "type": "java.lang.Integer",
+    "description": "A description for 'microatm_cbs.acquirer.port'"
+  },
+  {
+    "name": "client.http.audit.log",
+    "type": "java.lang.Boolean",
+    "description": "A description for 'client.http.audit.log'"
+  },
+  {
+    "name": "client.http.audit.log.body",
+    "type": "java.lang.Boolean",
+    "description": "A description for 'client.http.audit.log.body'"
+  },
+  {
+    "name": "client.http.logbody",
+    "type": "java.lang.Boolean",
+    "description": "A description for 'client.http.logbody'"
+  },
+  {
+    "name": "server.http.logbody",
+    "type": "java.lang.Boolean",
+    "description": "A description for 'server.http.logbody'"
+  },
+  {
+    "name": "server.http.audit.log",
+    "type": "java.lang.Boolean",
+    "description": "A description for 'server.http.audit.log'"
+  },
+  {
+    "name": "server.http.audit.log.body",
+    "type": "java.lang.Boolean",
+    "description": "A description for 'server.http.audit.log'"
+  }
+]}

@@ -1,0 +1,1274 @@
+CREATE TABLE AEPS_CONFIG (
+	PARAM VARCHAR2(256),
+	VALUE VARCHAR2(2048),
+	DESCRIPTION VARCHAR2(2048),
+	PRIMARY KEY(PARAM)
+);
+
+ 
+CREATE TABLE TXN_PURPOSE (
+	  PURPOSE     VARCHAR2 (2) NOT NULL
+	, DESCRIPTION VARCHAR2 (100)
+	, PRIMARY KEY (PURPOSE)
+ );
+
+CREATE TABLE AEPS_RESPONSE_CODES (
+	ONLINE_RESP_CODE 		VARCHAR2 (3) NOT NULL,
+	OFFLINE_RESP_CODE       VARCHAR2 (3),
+	UIDAI_ERROR_CODE 		VARCHAR2 (10),
+	DESCRIPTION 			VARCHAR2 (2048),
+	TYPE 					VARCHAR2 (20),
+	PRIMARY KEY (ONLINE_RESP_CODE)
+);
+
+CREATE TABLE CBS_TO_NPCI_RESPONSE_CODES (
+	  CBS_CODE     VARCHAR2 (3) NOT NULL
+	, NPCI_CODE   VARCHAR2 (3) NOT NULL
+	, DESCRIPTION VARCHAR2 (1024)
+	, PRIMARY KEY (CBS_CODE)
+ );
+
+CREATE TABLE CBS_TRANSACTION (
+	ID                NUMBER (18, 0) GENERATED ALWAYS AS IDENTITY START WITH 1 INCREMENT BY 1 NOT NULL,
+	IS_ACQUIRER       VARCHAR2 (1),
+	MTI               VARCHAR2 (4),
+	PAN               VARCHAR2 (29),
+	TIME              VARCHAR2 (20),
+	PCODE             VARCHAR2 (6),
+	RRN               VARCHAR2 (12),
+	RECON_INDICATOR   VARCHAR2 (100),
+	AUTH_CODE     	  VARCHAR2 (12),
+	RESPONSE_CODE     VARCHAR2 (3),
+	TRAN_DETAILS      VARCHAR2 (1024),
+	REQUEST_BODY      BLOB,
+	RESPONSE_BODY     BLOB,
+	REMOTE_ADDR       VARCHAR2 (255),
+	REMOTE_PORT       NUMBER (5),
+	LOCAL_ADDR        VARCHAR2 (255),
+	LOCAL_PORT        NUMBER (5),
+	REQUEST_TIME      TIMESTAMP DEFAULT SYSDATE,
+	RESPONSE_TIME     TIMESTAMP,
+	EXCEPTION_MESSAGE VARCHAR2 (1024),
+	PRIMARY KEY(ID)
+);
+
+
+CREATE TABLE ACQ_TRAFFIC_AUDIT
+ (
+	  ID                          NUMBER (18, 0) GENERATED ALWAYS AS IDENTITY START WITH 1 INCREMENT BY 1 NOT NULL
+	, REQUEST_URL                 VARCHAR2 (2048)
+	, METHOD                      VARCHAR2 (30)
+	, PROTOCOL                    VARCHAR2 (10)
+	, LOCALE                      VARCHAR2 (30)
+	, SCHEME                      VARCHAR2 (10)
+	, DISPATCHER_TYPE             VARCHAR2 (30)
+	, CONTENT_LENGTH              NUMBER (10, 0)
+	, CONTENT_TYPE                VARCHAR2 (250)
+	, CONTEXT_PATH                VARCHAR2 (2048)
+	, CHARACTER_ENCODING          VARCHAR2 (30)
+	, QUERY_STRING                VARCHAR2 (2048)
+	, REMOTE_ADDR                 VARCHAR2 (255)
+	, REMOTE_HOST                 VARCHAR2 (255)
+	, REMOTE_PORT                 NUMBER (5, 0)
+	, LOCAL_ADDR                  VARCHAR2 (255)
+	, LOCAL_NAME                  VARCHAR2 (255)
+	, LOCAL_PORT                  NUMBER (5, 0)
+	, SERVER_NAME                 VARCHAR2 (255)
+	, SERVER_PORT                 NUMBER (5, 0)
+	, CIPHER_USED                 VARCHAR2 (255)
+	, TLS_PROTOCOL                VARCHAR2 (20)
+	, REQUESTED_TLS_PROTOCOLS     VARCHAR2 (100)
+	, RESPONSE_STATUS             NUMBER (5, 0)
+	, RESPONSE_CONTENT_LENGTH     NUMBER (5, 0)
+	, RESPONSE_CONTENT_TYPE       VARCHAR2 (250)
+	, RESPONSE_CHARACTER_ENCODING VARCHAR2 (30)
+	, RESPONSE_IS_COMMITED        CHAR (1)
+	, REQUEST_TIME                TIMESTAMP (6) DEFAULT SYSDATE
+	, RESPONSE_TIME               TIMESTAMP (6) DEFAULT SYSDATE
+	, HEADERS CLOB
+	, BODY BLOB
+	, RESPONSE_HEADERS CLOB
+	, RESPONSE_BODY BLOB
+	, PRIMARY KEY (ID)
+ );
+ 
+CREATE TABLE WEB_TRAFFIC_AUDIT
+ (
+	  ID                          NUMBER (18, 0) GENERATED ALWAYS AS IDENTITY START WITH 1 INCREMENT BY 1 NOT NULL
+	, REQUEST_URL                 VARCHAR2 (2048)
+	, METHOD                      VARCHAR2 (30)
+	, PROTOCOL                    VARCHAR2 (10)
+	, LOCALE                      VARCHAR2 (30)
+	, SCHEME                      VARCHAR2 (10)
+	, DISPATCHER_TYPE             VARCHAR2 (30)
+	, CONTENT_LENGTH              NUMBER (10, 0)
+	, CONTENT_TYPE                VARCHAR2 (250)
+	, CONTEXT_PATH                VARCHAR2 (2048)
+	, CHARACTER_ENCODING          VARCHAR2 (30)
+	, QUERY_STRING                VARCHAR2 (2048)
+	, REMOTE_ADDR                 VARCHAR2 (255)
+	, REMOTE_HOST                 VARCHAR2 (255)
+	, REMOTE_PORT                 NUMBER (5, 0)
+	, LOCAL_ADDR                  VARCHAR2 (255)
+	, LOCAL_NAME                  VARCHAR2 (255)
+	, LOCAL_PORT                  NUMBER (5, 0)
+	, SERVER_NAME                 VARCHAR2 (255)
+	, SERVER_PORT                 NUMBER (5, 0)
+	, CIPHER_USED                 VARCHAR2 (255)
+	, TLS_PROTOCOL                VARCHAR2 (20)
+	, REQUESTED_TLS_PROTOCOLS     VARCHAR2 (100)
+	, RESPONSE_STATUS             NUMBER (5, 0)
+	, RESPONSE_CONTENT_LENGTH     NUMBER (5, 0)
+	, RESPONSE_CONTENT_TYPE       VARCHAR2 (250)
+	, RESPONSE_CHARACTER_ENCODING VARCHAR2 (30)
+	, RESPONSE_IS_COMMITED        CHAR (1)
+	, REQUEST_TIME                TIMESTAMP (6) DEFAULT SYSDATE
+	, RESPONSE_TIME               TIMESTAMP (6) DEFAULT SYSDATE
+	, HEADERS CLOB
+	, BODY BLOB
+	, RESPONSE_HEADERS CLOB
+	, RESPONSE_BODY BLOB
+	, PRIMARY KEY (ID)
+ );
+ 
+CREATE TABLE UNKNOWN_TRAFFIC_AUDIT (
+	  ID                          NUMBER (18, 0) GENERATED ALWAYS AS IDENTITY START WITH 1 INCREMENT BY 1 NOT NULL
+	, REQUEST_URL                 VARCHAR2 (2048)
+	, METHOD                      VARCHAR2 (30)
+	, PROTOCOL                    VARCHAR2 (10)
+	, LOCALE                      VARCHAR2 (30)
+	, SCHEME                      VARCHAR2 (10)
+	, DISPATCHER_TYPE             VARCHAR2 (30)
+	, CONTENT_LENGTH              NUMBER (10, 0)
+	, CONTENT_TYPE                VARCHAR2 (250)
+	, CONTEXT_PATH                VARCHAR2 (2048)
+	, CHARACTER_ENCODING          VARCHAR2 (30)
+	, QUERY_STRING                VARCHAR2 (2048)
+	, REMOTE_ADDR                 VARCHAR2 (255)
+	, REMOTE_HOST                 VARCHAR2 (255)
+	, REMOTE_PORT                 NUMBER (5, 0)
+	, LOCAL_ADDR                  VARCHAR2 (255)
+	, LOCAL_NAME                  VARCHAR2 (255)
+	, LOCAL_PORT                  NUMBER (5, 0)
+	, SERVER_NAME                 VARCHAR2 (255)
+	, SERVER_PORT                 NUMBER (5, 0)
+	, CIPHER_USED                 VARCHAR2 (255)
+	, TLS_PROTOCOL                VARCHAR2 (20)
+	, REQUESTED_TLS_PROTOCOLS     VARCHAR2 (100)
+	, RESPONSE_STATUS             NUMBER (5, 0)
+	, RESPONSE_CONTENT_LENGTH     NUMBER (5, 0)
+	, RESPONSE_CONTENT_TYPE       VARCHAR2 (250)
+	, RESPONSE_CHARACTER_ENCODING VARCHAR2 (30)
+	, RESPONSE_IS_COMMITED        CHAR (1)
+	, REQUEST_TIME                TIMESTAMP (6) DEFAULT SYSDATE
+	, RESPONSE_TIME               TIMESTAMP (6) DEFAULT SYSDATE
+	, HEADERS 					  CLOB
+	, BODY 						  BLOB
+	, RESPONSE_HEADERS 			  CLOB
+	, RESPONSE_BODY 			  BLOB
+	, PRIMARY KEY (ID)
+ );
+
+
+
+CREATE TABLE CLIENT_TRAFFIC_AUDIT
+ (
+	ID                           NUMBER (18, 0) GENERATED ALWAYS AS IDENTITY START WITH 1 INCREMENT BY 1 NOT NULL
+	, REQUEST_URL                 VARCHAR2 (2048)
+	, METHOD                      VARCHAR2 (30)
+	, PROTOCOL                    VARCHAR2 (10)
+	, SCHEME                      VARCHAR2 (10)
+	, DISPATCHER_TYPE             VARCHAR2 (30)
+	, CONTENT_LENGTH              NUMBER (10, 0)
+	, CONTENT_TYPE                VARCHAR2 (250)
+	, CHARACTER_ENCODING          VARCHAR2 (30)
+	, QUERY_STRING                VARCHAR2 (2048)
+	, REMOTE_ADDR                 VARCHAR2 (255)
+	, REMOTE_HOST                 VARCHAR2 (255)
+	, REMOTE_PORT                 NUMBER (5, 0)
+	, LOCAL_ADDR                  VARCHAR2 (255)
+	, LOCAL_NAME                  VARCHAR2 (255)
+	, LOCAL_PORT                  NUMBER (5, 0)
+	, SERVER_NAME                 VARCHAR2 (255)
+	, SERVER_PORT                 NUMBER (5, 0)
+	, CIPHER_USED                 VARCHAR2 (255)
+	, TLS_PROTOCOL                VARCHAR2 (20)
+	, REQUESTED_TLS_PROTOCOLS     VARCHAR2 (100)
+	, RESPONSE_STATUS             NUMBER (5, 0)
+	, RESPONSE_CONTENT_LENGTH     NUMBER (5, 0)
+	, RESPONSE_CONTENT_TYPE       VARCHAR2 (250)
+	, RESPONSE_CHARACTER_ENCODING VARCHAR2 (30)
+	, RESPONSE_IS_COMMITED        CHAR (1)
+	, REQUEST_TIME                TIMESTAMP (6) DEFAULT SYSDATE
+	, RESPONSE_TIME               TIMESTAMP (6) DEFAULT SYSDATE
+	, HEADERS CLOB
+	, BODY BLOB
+	, RESPONSE_HEADERS CLOB
+	, RESPONSE_BODY BLOB
+	, PRIMARY KEY (ID)
+ );
+ 
+
+CREATE TABLE ACQUIRER_ADVICE
+ (
+	MSG_ID                         VARCHAR2 (35) NOT NULL
+	, MSG_TS                        TIMESTAMP (6)
+	, PROD_TYPE                     VARCHAR2 (10)
+	, ORG_ID                        VARCHAR2 (20)
+	, MSG_VER                       VARCHAR2 (5)
+	, TXN_ID                        VARCHAR2 (35) NOT NULL
+	, TXN_TYPE                      VARCHAR2 (20) NOT NULL
+	, TXN_SUB_TYPE                  VARCHAR2 (30)
+	, PURPOSE                       VARCHAR2 (2)
+	, CUST_REF                      VARCHAR2 (12)
+	, REF_ID                        VARCHAR2 (35)
+	, REF_URL                       VARCHAR2 (35)
+	, NOTE                          VARCHAR2 (50)
+	, TXN_TS                        TIMESTAMP (6)
+	, INITIATION_MODE               VARCHAR2 (2)
+	, DEPOSIT_ID                    VARCHAR2 (20)
+	, ORG_RRN                       VARCHAR2 (12)
+	, ORG_TXN_ID                    VARCHAR2 (35)
+	, ORG_TXN_DATE                  TIMESTAMP (6)
+	, ORG_RESP_CODE                 VARCHAR2 (3)
+	, PAYER_ADDR                    VARCHAR2 (255)
+	, PAYER_NAME                    VARCHAR2 (99)
+	, PAYER_SEQ_NUM                 VARCHAR2 (3)
+	, PAYER_CODE                    VARCHAR2 (4)
+	, PAYER_TYPE                    VARCHAR2 (10)
+	, PAYER_IDENTITY_TYPE           VARCHAR2 (10)
+	, PAYER_IDENTITY_VERIFIED_NAME  VARCHAR2 (99)
+	, PAYER_INFO_IDENTITY_ID        VARCHAR2 (100)
+	, PAYER_RATING_VERIFIED_ADDRESS VARCHAR2 (5)
+	, PAYER_DEVICE_DETAILS          VARCHAR2 (2048)
+	, PAYER_AC_ADDR_TYPE            VARCHAR2 (20)
+	, PAYER_AC_IIN                  VARCHAR2 (6)
+	, PAYER_AC_UIDNUM_VID           VARCHAR2 (16)
+	, PAYER_AMOUNT                  NUMBER (14, 2)
+	, PAYER_CURRENCY                VARCHAR2 (5)
+	, REQ_ACK_TS                    TIMESTAMP (6)
+	, REQ_ACK_ERR                   VARCHAR2 (100)
+	, REQ_ACK_ERR_CD_DTL            VARCHAR2 (4000)
+	, RESP_TXN_TS                   TIMESTAMP (6)
+	, RESP_MSG_ID                   VARCHAR2 (35)
+	, RESP_MSG_TS                   TIMESTAMP (6)
+	, RESP_ORG_ID                   VARCHAR2 (20)
+	, RESP_RESULT                   VARCHAR2 (20)
+	, RESP_ERR_CODE                 VARCHAR2 (20)
+	, RESP_ACK_TS                   TIMESTAMP (6)
+	, RESP_ACK_ERR                  VARCHAR2 (100)
+	, RESP_ACK_ERR_CD_DTL           VARCHAR2 (4000)
+	, REQ_TIME                      TIMESTAMP (6) DEFAULT SYSDATE
+	, RESP_TIME                     TIMESTAMP (6) DEFAULT SYSDATE
+	, PRIMARY KEY (MSG_ID)
+ );
+ 
+ 
+CREATE TABLE ACQUIRER_ADVICE_PAYEE
+ (
+	MSG_ID         VARCHAR2 (36) NOT NULL
+	, SEQNUM        VARCHAR2 (3) NOT NULL
+	, ADDR          VARCHAR2 (100)
+	, TYPE          VARCHAR2 (30)
+	, CODE          VARCHAR2 (6)
+	, AC_ADDRTYPE   VARCHAR2 (50)
+	, AC_IIN        VARCHAR2 (6)
+	, AC_UIDNUM_VID VARCHAR2 (16)
+	, AMOUNT        NUMBER (14, 2)
+	, CURRENCY      VARCHAR2 (10)
+	, CONSTRAINT PK_AQADP PRIMARY KEY (MSG_ID, SEQNUM)
+	, CONSTRAINT FK_AQADP_MSG_ID FOREIGN KEY (MSG_ID) REFERENCES ACQUIRER_ADVICE (MSG_ID)
+ );
+ 
+ 
+CREATE TABLE ACQUIRER_ADVICE_REF
+ (
+	MSG_ID         VARCHAR2 (35) NOT NULL
+	, SEQNUM        VARCHAR2 (3) NOT NULL
+	, TYPE          VARCHAR2 (30) NOT NULL
+	, ADDR          VARCHAR2 (100)
+	, CODE          VARCHAR2 (6)
+	, ORG_AMOUNT    NUMBER (14, 2)
+	, SETT_AMOUNT   NUMBER (14, 2)
+	, SETT_CURRENCY VARCHAR2 (5)
+	, APPROVAL_NO   VARCHAR2 (12)
+	, RESP_CODE     VARCHAR2 (3)
+	, REG_NAME      VARCHAR2 (100)
+	, CONSTRAINT PK_AQARF PRIMARY KEY (MSG_ID, SEQNUM, TYPE)
+	, CONSTRAINT FK_AQADR_MSG_ID FOREIGN KEY (MSG_ID) REFERENCES ACQUIRER_ADVICE (MSG_ID)
+ );
+
+
+CREATE TABLE ACQUIRER_BALANCE_ENQUIRY
+ (
+	MSG_ID                         VARCHAR2 (35) NOT NULL
+	, MSG_TS                        TIMESTAMP (6)
+	, PROD_TYPE                     VARCHAR2 (10)
+	, ORG_ID                        VARCHAR2 (20)
+	, MSG_VER                       VARCHAR2 (5)
+	, TXN_ID                        VARCHAR2 (35) NOT NULL
+	, TXN_TYPE                      VARCHAR2 (20) NOT NULL
+	, CUST_REF                      VARCHAR2 (12)
+	, REF_ID                        VARCHAR2 (35)
+	, REF_URL                       VARCHAR2 (35)
+	, NOTE                          VARCHAR2 (50)
+	, TXN_TS                        TIMESTAMP (6)
+	, PAYER_ADDR                    VARCHAR2 (255)
+	, PAYER_NAME                    VARCHAR2 (99)
+	, PAYER_SEQ_NUM                 VARCHAR2 (3)
+	, PAYER_CODE                    VARCHAR2 (4)
+	, PAYER_TYPE                    VARCHAR2 (10)
+	, PAYER_IDENTITY_VERIFIED_NAME  VARCHAR2 (99)
+	, PAYER_INFO_IDENTITY_ID        VARCHAR2 (100)
+	, PAYER_RATING_VERIFIED_ADDRESS VARCHAR2 (5)
+	, PAYER_DEVICE_DETAILS          VARCHAR2 (2048)
+	, PAYER_AC_ADDR_TYPE            VARCHAR2 (20)
+	, PAYER_AC_IIN                  VARCHAR2 (6)
+	, PAYER_AC_UIDNUM_VID           VARCHAR2 (16)
+	, PAYER_CRED_TYPE               VARCHAR2 (20)
+	, PAYER_CRED_SUB_TYPE           VARCHAR2 (20)
+	, REQ_ACK_TS                    TIMESTAMP (6)
+	, REQ_ACK_ERR                   VARCHAR2 (100)
+	, REQ_ACK_ERR_CD_DTL            VARCHAR2 (4000)
+	, RESP_TXN_TS                   TIMESTAMP (6)
+	, RESP_MSG_ID                   VARCHAR2 (35)
+	, RESP_MSG_TS                   TIMESTAMP (6)
+	, RESP_ORG_ID                   VARCHAR2 (20)
+	, RESP_RESULT                   VARCHAR2 (20)
+	, RESP_ERR_CODE                 VARCHAR2 (20)
+	, RESP_UIDAI_ERROR              VARCHAR2 (20)
+	, RESP_AUTH_CODE                VARCHAR2 (32)
+	, RESP_ACK_TS                   TIMESTAMP (6)
+	, RESP_ACK_ERR                  VARCHAR2 (100)
+	, RESP_ACK_ERR_CD_DTL           VARCHAR2 (4000)
+	, REQ_TIME                      TIMESTAMP (6) DEFAULT SYSDATE
+	, RESP_TIME                     TIMESTAMP (6) DEFAULT SYSDATE
+ , PRIMARY KEY (MSG_ID)
+ );
+
+CREATE TABLE ACQUIRER_BIO_AUTH
+ (
+	MSG_ID                         VARCHAR2 (35) NOT NULL
+	, MSG_TS                        TIMESTAMP (6)
+	, PROD_TYPE                     VARCHAR2 (10)
+	, ORG_ID                        VARCHAR2 (20)
+	, MSG_VER                       VARCHAR2 (5)
+	, TXN_ID                        VARCHAR2 (35) NOT NULL
+	, TXN_TYPE                      VARCHAR2 (20) NOT NULL
+	, PURPOSE                       VARCHAR2 (2)
+	, CUST_REF                      VARCHAR2 (12)
+	, REF_ID                        VARCHAR2 (35)
+	, REF_URL                       VARCHAR2 (35)
+	, NOTE                          VARCHAR2 (50)
+	, TXN_TS                        TIMESTAMP (6)
+	, INITIATION_MODE               VARCHAR2 (2)
+	, PAYER_ADDR                    VARCHAR2 (255)
+	, PAYER_NAME                    VARCHAR2 (99)
+	, PAYER_SEQ_NUM                 VARCHAR2 (3)
+	, PAYER_CODE                    VARCHAR2 (4)
+	, PAYER_TYPE                    VARCHAR2 (10)
+	, PAYER_IDENTITY_TYPE           VARCHAR2 (10)
+	, PAYER_IDENTITY_VERIFIED_NAME  VARCHAR2 (99)
+	, PAYER_INFO_IDENTITY_ID        VARCHAR2 (100)
+	, PAYER_RATING_VERIFIED_ADDRESS VARCHAR2 (5)
+	, PAYER_DEVICE_DETAILS          VARCHAR2 (2048)
+	, PAYER_AC_ADDR_TYPE            VARCHAR2 (20)
+	, PAYER_AC_IIN                  VARCHAR2 (6)
+	, PAYER_AC_UIDNUM_VID           VARCHAR2 (16)
+	, PAYER_CRED_TYPE               VARCHAR2 (20)
+	, PAYER_CRED_SUB_TYPE           VARCHAR2 (20)
+	, PAYER_AMOUNT                  NUMBER (14, 2)
+	, PAYER_CURRENCY                VARCHAR2 (5)
+	, REQ_ACK_TS                    TIMESTAMP (6)
+	, REQ_ACK_ERR                   VARCHAR2 (100)
+	, REQ_ACK_ERR_CD_DTL            VARCHAR2 (4000)
+	, RESP_TXN_TS                   TIMESTAMP (6)
+	, RESP_MSG_ID                   VARCHAR2 (35)
+	, RESP_MSG_TS                   TIMESTAMP (6)
+	, RESP_ORG_ID                   VARCHAR2 (20)
+	, RESP_RESULT                   VARCHAR2 (20)
+	, RESP_ERR_CODE                 VARCHAR2 (20)
+	, RESP_AUTH_CODE                VARCHAR2 (32)
+	, RESP_UIDAI_INFO               VARCHAR2 (2048)
+	, RESP_ACK_TS                   TIMESTAMP (6)
+	, RESP_ACK_ERR                  VARCHAR2 (100)
+	, RESP_ACK_ERR_CD_DTL           VARCHAR2 (4000)
+	, REQ_TIME                      TIMESTAMP DEFAULT SYSDATE
+	, RESP_TIME                     TIMESTAMP DEFAULT SYSDATE
+	, PRIMARY KEY (MSG_ID)
+ );
+
+
+CREATE TABLE ACQUIRER_TRANSACTION
+ (
+	  MSG_ID                        VARCHAR2 (35) NOT NULL
+	, MSG_TS                        TIMESTAMP (6)
+	, PROD_TYPE                     VARCHAR2 (10)
+	, ORG_ID                        VARCHAR2 (20)
+	, MSG_VER                       VARCHAR2 (5)
+	, TXN_ID                        VARCHAR2 (35) NOT NULL
+	, TXN_TYPE                      VARCHAR2 (20) NOT NULL
+	, TXN_SUB_TYPE                  VARCHAR2 (30)
+	, PURPOSE                       VARCHAR2 (2)
+	, CUST_REF                      VARCHAR2 (12)
+	, REF_ID                        VARCHAR2 (35)
+	, REF_URL                       VARCHAR2 (35)
+	, NOTE                          VARCHAR2 (50)
+	, TXN_TS                        TIMESTAMP (6)
+	, INITIATION_MODE               VARCHAR2 (2)
+	, DEPOSIT_ID                    VARCHAR2 (20)
+	, PAYER_ADDR                    VARCHAR2 (255)
+	, PAYER_NAME                    VARCHAR2 (99)
+	, PAYER_SEQ_NUM                 VARCHAR2 (3)
+	, PAYER_CODE                    VARCHAR2 (4)
+	, PAYER_TYPE                    VARCHAR2 (10)
+	, PAYER_IDENTITY_TYPE           VARCHAR2 (10)
+	, PAYER_IDENTITY_VERIFIED_NAME  VARCHAR2 (99)
+	, PAYER_INFO_IDENTITY_ID        VARCHAR2 (100)
+	, PAYER_RATING_VERIFIED_ADDRESS VARCHAR2 (5)
+	, PAYER_DEVICE_DETAILS          VARCHAR2 (2048)
+	, PAYER_AC_ADDR_TYPE            VARCHAR2 (20)
+	, PAYER_AC_IIN                  VARCHAR2 (6)
+	, PAYER_AC_UIDNUM_VID           VARCHAR2 (16)
+	, PAYER_CRED_TYPE               VARCHAR2 (20)
+	, PAYER_CRED_SUB_TYPE           VARCHAR2 (20)
+	, PAYER_CRED_DATA               VARCHAR2 (2048)
+	, PAYER_AMOUNT                  NUMBER (14, 2)
+	, PAYER_CURRENCY                VARCHAR2 (5)
+	, REQ_ACK_TS                    TIMESTAMP (6)
+	, REQ_ACK_ERR                   VARCHAR2 (100)
+	, REQ_ACK_ERR_CD_DTL            VARCHAR2 (4000)
+	, RESP_MSG_ID                   VARCHAR2 (35)
+	, RESP_MSG_TS                   TIMESTAMP (6)
+	, RESP_ORG_ID                   VARCHAR2 (20)
+	, RESP_RESULT                   VARCHAR2 (20)
+	, RESP_ERR_CODE                 VARCHAR2 (20)
+	, REF_RESP_CODE                 VARCHAR2 (3)
+	, RESP_UIDAI_ERROR              VARCHAR2 (20)
+	, RESP_AUTH_CODE                VARCHAR2 (32)
+	, RESP_ACK_TS                   TIMESTAMP (6)
+	, RESP_ACK_ERR                  VARCHAR2 (100)
+	, RESP_ACK_ERR_CD_DTL           VARCHAR2 (4000)
+	, RESP_RECEIVED                 VARCHAR2 (1) DEFAULT 'N'
+	, UIDAI_TOKEN                   VARCHAR2 (100)
+	, CBS_RESPONSE_CODE             VARCHAR2 (10)
+	, CBS_AUTH_CODE                 VARCHAR2 (10)
+	, AGENT_DETAILS 				VARCHAR2 (1024)
+	, RECON_INDICATOR 				VARCHAR2 (256)
+	, CBS_TRAN_DETAILS              VARCHAR2 (1024)
+	, CHANNEL 				 		VARCHAR2 (20)
+	, REQ_TIME                      TIMESTAMP (6) DEFAULT SYSDATE
+	, RESP_TIME                     TIMESTAMP (6) DEFAULT SYSDATE
+	, EXCEPTION      				BLOB
+	, PRIMARY KEY (MSG_ID)
+ );
+
+
+CREATE TABLE ACQUIRER_TRANSACTION_PAYEE
+ (
+	MSG_ID         VARCHAR2 (36) NOT NULL
+	, SEQNUM        VARCHAR2 (3) NOT NULL
+	, ADDR          VARCHAR2 (100)
+	, TYPE          VARCHAR2 (30)
+	, CODE          VARCHAR2 (6)
+	, AC_ADDRTYPE   VARCHAR2 (50)
+	, AC_IIN        VARCHAR2 (6)
+	, AC_UIDNUM_VID VARCHAR2 (16)
+	, AMOUNT        NUMBER (14, 2)
+	, CURRENCY      VARCHAR2 (10)
+	, CRED_TYPE     VARCHAR2 (20)
+	, CRED_SUB_TYPE VARCHAR2 (20)
+	, CRED_DATA     VARCHAR2 (2048)
+	, CONSTRAINT PK_AQTRP PRIMARY KEY (MSG_ID, SEQNUM)
+	, CONSTRAINT FK_AQTRP_MSG_ID FOREIGN KEY (MSG_ID) REFERENCES ACQUIRER_TRANSACTION (MSG_ID)
+ );
+
+
+CREATE TABLE ACQUIRER_TRANSACTION_REF
+ (
+	  MSG_ID        VARCHAR2 (35) NOT NULL
+	, TYPE          VARCHAR2 (30)
+	, SEQNUM        VARCHAR2 (3) NOT NULL
+	, ADDR          VARCHAR2 (100)
+	, SETT_AMOUNT   NUMBER (14, 2)
+	, SETT_CURRENCY VARCHAR2 (5)
+	, APPROVAL_NO   VARCHAR2 (12)
+	, RESP_CODE     VARCHAR2 (3)
+	, REG_NAME      VARCHAR2 (100)
+	, ORG_AMOUNT    NUMBER (14, 2)
+	, CODE          VARCHAR2 (6)
+	, CONSTRAINT PK_AQTRF PRIMARY KEY (MSG_ID, TYPE, SEQNUM)
+	, CONSTRAINT FK_AQTRF_MSG_ID FOREIGN KEY (MSG_ID) REFERENCES ACQUIRER_TRANSACTION (MSG_ID)
+ );
+
+CREATE TABLE ACQUIRER_REVERSAL
+(
+	MSG_ID                        VARCHAR2 (35) NOT NULL,
+	MSG_TS                        TIMESTAMP,
+	PROD_TYPE                     VARCHAR2 (10),
+	ORG_ID                        VARCHAR2 (20),
+	MSG_VER                       VARCHAR2 (5),	
+	TXN_ID                        VARCHAR2 (35) NOT NULL,
+	TXN_TYPE                      VARCHAR2 (20) NOT NULL,
+	TXN_SUB_TYPE                  VARCHAR2 (30),
+	PURPOSE                       VARCHAR2 (2),
+	CUST_REF                      VARCHAR2 (12),
+	REF_ID                        VARCHAR2 (35),
+	REF_URL                       VARCHAR2 (35),
+	NOTE                          VARCHAR2 (50),
+	TXN_TS                        TIMESTAMP,
+	INITIATION_MODE               VARCHAR2 (2),	
+	ORG_TXN_MSG_ID                VARCHAR2 (35),
+	ORG_TXN_ID                    VARCHAR2 (35) NOT NULL,
+   	ORG_TXN_TS                    TIMESTAMP,	
+   	ORG_RESP_CODE                 VARCHAR2 (3) NOT NULL,
+	PAYER_ADDR                    VARCHAR2 (255),
+	PAYER_NAME                    VARCHAR2 (99),
+	PAYER_SEQ_NUM                 VARCHAR2 (3),
+	PAYER_CODE                    VARCHAR2 (4),
+	PAYER_TYPE                    VARCHAR2 (10),
+	PAYER_IDENTITY_TYPE           VARCHAR2 (10),
+	PAYER_IDENTITY_VERIFIED_NAME  VARCHAR2 (99),
+	PAYER_INFO_IDENTITY_ID        VARCHAR2 (100),
+	PAYER_RATING_VERIFIED_ADDRESS VARCHAR2 (5),
+	PAYER_DEVICE_DETAILS          VARCHAR2 (2048),
+	PAYER_AC_ADDR_TYPE            VARCHAR2 (20),
+	PAYER_AC_IIN                  VARCHAR2 (6),
+	PAYER_AC_UIDNUM_VID           VARCHAR2 (16),   
+	PAYER_AMOUNT                  NUMBER (14,2),
+	PAYER_CURRENCY                VARCHAR2 (5),
+	REQ_ACK_TS                    TIMESTAMP,
+	REQ_ACK_ERR                   VARCHAR2 (100),
+	REQ_ACK_ERR_CD_DTL            VARCHAR2 (4000),
+	RESP_MSG_ID                   VARCHAR2 (35),
+	RESP_MSG_TS                   TIMESTAMP,
+	RESP_ORG_ID                   VARCHAR2 (20),
+	RESP_RESULT                   VARCHAR2 (20),
+	RESP_ERR_CODE                 VARCHAR2 (20),
+	RESP_ACK_TS                   TIMESTAMP,
+	RESP_ACK_ERR                  VARCHAR2 (100),
+	RESP_ACK_ERR_CD_DTL           VARCHAR2 (4000),
+	RESP_RECEIVED                 VARCHAR2 (1) DEFAULT 'N',
+	CBS_RESPONSE_CODE             VARCHAR2 (10),
+	CBS_AUTH_CODE                 VARCHAR2 (10),
+	AGENT_DETAILS                 VARCHAR2 (1024),
+	RECON_INDICATOR               VARCHAR2 (256),
+	CBS_TRAN_DETAILS              VARCHAR2 (1024),
+	CHANNEL                       VARCHAR2 (20),
+	REQ_TIME                      TIMESTAMP DEFAULT SYSDATE,
+	RESP_TIME                     TIMESTAMP DEFAULT SYSDATE,
+	EXCEPTION      				  BLOB,
+	PRIMARY KEY (MSG_ID)
+);
+
+
+CREATE TABLE ACQUIRER_REVERSAL_PAYEE
+ (
+	MSG_ID         VARCHAR2 (36) NOT NULL
+	, SEQNUM        VARCHAR2 (3) NOT NULL
+	, ADDR          VARCHAR2 (100)
+	, TYPE          VARCHAR2 (30)
+	, CODE          VARCHAR2 (6)
+	, AMOUNT        NUMBER (14, 2)
+	, CURRENCY      VARCHAR2 (10)
+	, CONSTRAINT PK_AQ_REV_PYE PRIMARY KEY (MSG_ID, SEQNUM)
+	, CONSTRAINT FK_AQ_REV_PYE_MSG_ID FOREIGN KEY (MSG_ID) REFERENCES ACQUIRER_REVERSAL (MSG_ID)
+ );
+ 
+ CREATE TABLE ACQUIRER_REVERSAL_REF
+ (
+	  MSG_ID        VARCHAR2 (35) NOT NULL
+	, TYPE          VARCHAR2 (30)
+	, SEQNUM        VARCHAR2 (3) NOT NULL
+	, ADDR          VARCHAR2 (100)
+	, CODE          VARCHAR2 (6)
+	, SETT_AMOUNT   NUMBER (14, 2)
+	, SETT_CURRENCY VARCHAR2 (5)
+	, ORG_AMOUNT    NUMBER (14, 2)
+	, APPROVAL_NO   VARCHAR2 (12)
+	, RESP_CODE     VARCHAR2 (3)
+	, CONSTRAINT PK_AQ_REV_REF PRIMARY KEY (MSG_ID, TYPE, SEQNUM)
+	, CONSTRAINT FK_AQ_REV_REF_MSG_ID FOREIGN KEY (MSG_ID) REFERENCES ACQUIRER_REVERSAL (MSG_ID)
+ );
+
+CREATE TABLE ISSUER_ADVICE
+ (
+	MSG_ID                         VARCHAR2 (35) NOT NULL
+	, MSG_TS                        TIMESTAMP (6)
+	, PROD_TYPE                     VARCHAR2 (10)
+	, ORG_ID                        VARCHAR2 (20)
+	, MSG_VER                       VARCHAR2 (5)
+	, CALLBACK_ENDPOINT_IP          VARCHAR2 (20)
+	, TXN_ID                        VARCHAR2 (35)
+	, TXN_TYPE                      VARCHAR2 (20)
+	, TXN_SUB_TYPE                  VARCHAR2 (30)
+	, PURPOSE                       VARCHAR2 (2)
+	, CUST_REF                      VARCHAR2 (12)
+	, REF_ID                        VARCHAR2 (35)
+	, REF_URL                       VARCHAR2 (35)
+	, NOTE                          VARCHAR2 (50)
+	, TXN_TS                        TIMESTAMP (6)
+	, INITIATION_MODE               VARCHAR2 (2)
+	, DEPOSIT_ID                    VARCHAR2 (20)
+	, ORG_RRN                       VARCHAR2 (12)
+	, ORG_TXN_DATE                  TIMESTAMP (6)
+	, ORG_TXN_ID                    VARCHAR2 (35)
+	, PAYER_ADDR                    VARCHAR2 (255)
+	, PAYER_NAME                    VARCHAR2 (99)
+	, PAYER_SEQ_NUM                 VARCHAR2 (3)
+	, PAYER_CODE                    VARCHAR2 (4)
+	, PAYER_TYPE                    VARCHAR2 (10)
+	, PAYER_IDENTITY_TYPE           VARCHAR2 (10)
+	, PAYER_IDENTITY_VERIFIED_NAME  VARCHAR2 (99)
+	, PAYER_INFO_IDENTITY_ID        VARCHAR2 (100)
+	, PAYER_RATING_VERIFIED_ADDRESS VARCHAR2 (5)
+	, PAYER_DEVICE_DETAILS          VARCHAR2 (2048)
+	, PAYER_AC_ADDR_TYPE            VARCHAR2 (20)
+	, PAYER_AC_IIN                  VARCHAR2 (6)
+	, PAYER_AC_UIDNUM_VID           VARCHAR2 (16)
+	, PAYER_AMOUNT                  NUMBER (14, 2)
+	, PAYER_CURRENCY                VARCHAR2 (5)
+	, PAYEE_SEQNUM                  VARCHAR2 (3) NOT NULL
+	, PAYEE_TYPE                    VARCHAR2 (30) NOT NULL
+	, PAYEE_ADDR                    VARCHAR2 (100)
+	, PAYEE_CODE                    VARCHAR2 (6)
+	, PAYEE_NAME                    VARCHAR2 (100)
+	, PAYEE_AC_ADDRTYPE             VARCHAR2 (50)
+	, PAYEE_AC_IIN                  VARCHAR2 (6)
+	, PAYEE_AC_UIDNUM_VID           VARCHAR2 (16)
+	, PAYEE_AMOUNT                  NUMBER (14, 2)
+	, PAYEE_CURRENCY                VARCHAR2 (10)
+	, REQ_ACK_TS                    TIMESTAMP (6)
+	, REQ_ACK_ERR                   VARCHAR2 (100)
+	, REQ_ACK_ERR_CD_DTL  			VARCHAR2 (4000)
+	, RESP_MSG_ID                   VARCHAR2 (35)
+	, RESP_MSG_TS                   TIMESTAMP (6)
+	, RESP_ORG_ID                   VARCHAR2 (20)
+	, RESP_RESULT                   VARCHAR2 (20)
+	, RESP_ERR_CODE                 VARCHAR2 (20)
+	, RESP_ACK_TS                   TIMESTAMP (6)
+	, RESP_ACK_ERR                  VARCHAR2 (100)
+	, RESP_ACK_ERR_CD_DTL           VARCHAR2 (4000)
+	, CBS_RESPONSE_CODE             VARCHAR2 (10)
+	, CBS_AUTH_CODE                 VARCHAR2 (10)
+	, CBS_TRAN_DETAILS              VARCHAR2 (1024)
+	, REQ_TIME                      TIMESTAMP (6) DEFAULT SYSDATE
+	, RESP_TIME                     TIMESTAMP (6) DEFAULT SYSDATE
+	, PRIMARY KEY (MSG_ID)
+ );
+
+CREATE TABLE ISSUER_ADVICE_REF
+ (
+	MSG_ID         VARCHAR2 (35) NOT NULL
+	, TYPE          VARCHAR2 (30) NOT NULL
+	, SEQNUM        VARCHAR2 (3) NOT NULL
+	, ADDR          VARCHAR2 (100)
+	, SETT_AMOUNT   NUMBER (14, 2)
+	, SETT_CURRENCY VARCHAR2 (5)
+	, APPROVAL_NO   VARCHAR2 (12)
+	, RESP_CODE     VARCHAR2 (3)
+	, REG_NAME      VARCHAR2 (100)
+	, ORG_AMOUNT    NUMBER (14, 2)
+	, CODE          VARCHAR2 (6)
+	, CONSTRAINT PK_IADF PRIMARY KEY (MSG_ID, TYPE, SEQNUM)
+	, CONSTRAINT FK_IADF_MSG_ID FOREIGN KEY (MSG_ID) REFERENCES ISSUER_ADVICE (MSG_ID)
+ );
+
+ 
+CREATE TABLE ISSUER_BALANCE_ENQUIRY
+ (
+	MSG_ID                VARCHAR2 (35) NOT NULL
+	, MSG_TS               TIMESTAMP (6)
+	, PROD_TYPE            VARCHAR2 (10)
+	, ORG_ID               VARCHAR2 (20)
+	, MSG_VER              VARCHAR2 (5)
+	, CALLBACK_ENDPOINT_IP VARCHAR2 (20)
+	, TXN_ID               VARCHAR2 (35) NOT NULL
+	, TXN_TYPE             VARCHAR2 (20) NOT NULL
+	, CUST_REF             VARCHAR2 (12)
+	, REF_ID               VARCHAR2 (35)
+	, REF_URL              VARCHAR2 (35)
+	, NOTE                 VARCHAR2 (50)
+	, TXN_TS               TIMESTAMP (6)
+	, PAYER_ADDR           VARCHAR2 (255)
+	, PAYER_NAME           VARCHAR2 (99)
+	, PAYER_SEQ_NUM        VARCHAR2 (3)
+	, PAYER_CODE           VARCHAR2 (4)
+	, PAYER_TYPE           VARCHAR2 (10)
+	, PAYER_DEVICE_DETAILS VARCHAR2 (2048)
+	, PAYER_AC_ADDR_TYPE   VARCHAR2 (20)
+	, PAYER_AC_IIN         VARCHAR2 (6)
+	, PAYER_AC_UIDNUM_VID  VARCHAR2 (16)
+	, PAYER_CRED_TYPE      VARCHAR2 (20)
+	, PAYER_CRED_SUB_TYPE  VARCHAR2 (20)
+	, PAYER_CRED_DATA      VARCHAR2 (2048)
+	, REQ_ACK_TS           TIMESTAMP (6)
+	, REQ_ACK_ERR          VARCHAR2 (100)
+	, REQ_ACK_ERR_CD_DTL  VARCHAR2 (4000)
+	, RESP_MSG_ID          VARCHAR2 (35)
+	, RESP_MSG_TS          TIMESTAMP (6)
+	, RESP_ORG_ID          VARCHAR2 (20)
+	, RESP_RESULT          VARCHAR2 (20)
+	, RESP_ERR_CODE        VARCHAR2 (20)
+	, RESP_AUTH_CODE       VARCHAR2 (32)
+	, RESP_ACK_TS          TIMESTAMP (6)
+	, RESP_ACK_ERR         VARCHAR2 (100)
+	, RESP_ACK_ERR_CD_DTL  VARCHAR2 (4000)
+	, CBS_RESP_CODE        VARCHAR2 (3)
+	, CBS_AUTH_CODE        VARCHAR2 (6)
+	, CBS_TRAN_DETAILS              VARCHAR2 (1024)
+	, REQ_TIME             TIMESTAMP (6) DEFAULT SYSDATE
+	, RESP_TIME            TIMESTAMP (6) DEFAULT SYSDATE
+	, PRIMARY KEY (MSG_ID)
+ );
+
+CREATE TABLE ISSUER_REVERSAL
+ (
+	  MSG_ID                        VARCHAR2 (35) NOT NULL
+	, MSG_TS                        TIMESTAMP (6)
+	, PROD_TYPE                     VARCHAR2 (10)
+	, ORG_ID                        VARCHAR2 (20)
+	, MSG_VER                       VARCHAR2 (5)
+	, CALLBACK_ENDPOINT_IP          VARCHAR2 (20)
+	, ORG_TXN_MSG_ID                VARCHAR2 (35)
+	, TXN_ID                        VARCHAR2 (35)
+	, TXN_TYPE                      VARCHAR2 (20)
+	, TXN_SUB_TYPE                  VARCHAR2 (30)
+	, PURPOSE                       VARCHAR2 (2)
+	, CUST_REF                      VARCHAR2 (12)
+	, REF_ID                        VARCHAR2 (35)
+	, REF_URL                       VARCHAR2 (35)
+	, NOTE                          VARCHAR2 (50)
+	, TXN_TS                        TIMESTAMP (6)
+	, INITIATION_MODE               VARCHAR2 (2)
+	, DEPOSIT_ID                    VARCHAR2 (20)
+	, PAYER_ADDR                    VARCHAR2 (255)
+	, PAYER_NAME                    VARCHAR2 (99)
+	, PAYER_SEQ_NUM                 VARCHAR2 (3)
+	, PAYER_CODE                    VARCHAR2 (4)
+	, PAYER_TYPE                    VARCHAR2 (10)
+	, PAYER_IDENTITY_TYPE           VARCHAR2 (10)
+	, PAYER_IDENTITY_VERIFIED_NAME  VARCHAR2 (99)
+	, PAYER_RATING_VERIFIED_ADDRESS VARCHAR2 (5)
+	, PAYER_AC_ADDR_TYPE            VARCHAR2 (20)
+	, PAYER_AC_IIN                  VARCHAR2 (6)
+	, PAYER_AC_UIDNUM_VID           VARCHAR2 (16)
+	, PAYER_AMOUNT                  NUMBER (14, 2)
+	, PAYER_CURRENCY                VARCHAR2 (5)
+	, REQ_ACK_TS                    TIMESTAMP (6)
+	, REQ_ACK_ERR                   VARCHAR2 (100)
+	, REQ_ACK_ERR_CD_DTL  			VARCHAR2 (4000)
+	, RESP_MSG_ID                   VARCHAR2 (35)
+	, RESP_MSG_TS                   TIMESTAMP (6)
+	, RESP_ORG_ID                   VARCHAR2 (20)
+	, RESP_RESULT                   VARCHAR2 (20)
+	, RESP_ERR_CODE                 VARCHAR2 (20)
+	, RESP_ACK_TS                   TIMESTAMP (6)
+	, RESP_ACK_ERR                  VARCHAR2 (100)
+	, RESP_ACK_ERR_CD_DTL           VARCHAR2 (4000)
+	, CBS_RESPONSE_CODE             VARCHAR2 (10)
+	, CBS_AUTH_CODE                 VARCHAR2 (10)
+	, CBS_TRAN_DETAILS              VARCHAR2 (1024)
+	, REQ_TIME                      TIMESTAMP (6) DEFAULT SYSDATE
+	, RESP_TIME                     TIMESTAMP (6) DEFAULT SYSDATE
+	, PRIMARY KEY (MSG_ID)
+ );
+
+CREATE TABLE ISSUER_REVERSAL_REF
+ (
+	MSG_ID         VARCHAR2 (35) NOT NULL
+	, TYPE          VARCHAR2 (30) NOT NULL
+	, SEQNUM        VARCHAR2 (3) NOT NULL
+	, ADDR          VARCHAR2 (100)
+	, CODE          VARCHAR2 (6)
+	, ORG_AMOUNT    NUMBER (14, 2)
+	, SETT_AMOUNT   NUMBER (14, 2)
+	, SETT_CURRENCY VARCHAR2 (5)
+	, RESP_CODE     VARCHAR2 (3)
+	, CONSTRAINT PK_IREV_RF PRIMARY KEY (MSG_ID, TYPE, SEQNUM)
+	, CONSTRAINT FK_IREV_RF_MSG_ID FOREIGN KEY (MSG_ID) REFERENCES ISSUER_REVERSAL (MSG_ID)
+ );
+
+CREATE TABLE ISSUER_TRANSACTION
+ (
+	MSG_ID                         VARCHAR2 (35) NOT NULL
+	, MSG_TS                        TIMESTAMP (6)
+	, PROD_TYPE                     VARCHAR2 (10)
+	, ORG_ID                        VARCHAR2 (20)
+	, MSG_VER                       VARCHAR2 (5)
+	, CALLBACK_ENDPOINT_IP          VARCHAR2 (20)
+	, TXN_ID                        VARCHAR2 (35)
+	, TXN_TYPE                      VARCHAR2 (20)
+	, TXN_SUB_TYPE                  VARCHAR2 (30)
+	, PURPOSE                       VARCHAR2 (2)
+	, CUST_REF                      VARCHAR2 (12)
+	, REF_ID                        VARCHAR2 (35)
+	, REF_URL                       VARCHAR2 (35)
+	, NOTE                          VARCHAR2 (50)
+	, TXN_TS                        TIMESTAMP (6)
+	, INITIATION_MODE               VARCHAR2 (2)
+	, DEPOSIT_ID                    VARCHAR2 (20)
+	, RISK_PROVIDER                 VARCHAR2 (20)
+	, RISK_TYPE                     VARCHAR2 (20)
+	, RISK_VALUE                    VARCHAR2 (8)
+	, PAYER_ADDR                    VARCHAR2 (255)
+	, PAYER_NAME                    VARCHAR2 (99)
+	, PAYER_SEQ_NUM                 VARCHAR2 (3)
+	, PAYER_CODE                    VARCHAR2 (4)
+	, PAYER_TYPE                    VARCHAR2 (10)
+	, PAYER_IDENTITY_TYPE           VARCHAR2 (10)
+	, PAYER_IDENTITY_VERIFIED_NAME  VARCHAR2 (99)
+	, PAYER_INFO_IDENTITY_ID        VARCHAR2 (100)
+	, PAYER_RATING_VERIFIED_ADDRESS VARCHAR2 (5)
+	, PAYER_DEVICE_DETAILS          VARCHAR2 (2048)
+	, PAYER_AC_ADDR_TYPE            VARCHAR2 (20)
+	, PAYER_AC_IIN                  VARCHAR2 (6)
+	, PAYER_AC_UIDNUM_VID           VARCHAR2 (16)
+	, PAYER_CRED_TYPE               VARCHAR2 (20)
+	, PAYER_CRED_SUB_TYPE           VARCHAR2 (20)
+	, PAYER_CRED_DATA               VARCHAR2 (2048)
+	, PAYER_AMOUNT                  NUMBER (14, 2)
+	, PAYER_CURRENCY                VARCHAR2 (5)
+	, REQ_ACK_TS                    TIMESTAMP (6)
+	, REQ_ACK_ERR                   VARCHAR2 (100)
+	, REQ_ACK_ERR_CD_DTL           VARCHAR2 (4000)
+	, RESP_MSG_ID                   VARCHAR2 (35)
+	, RESP_MSG_TS                   TIMESTAMP (6)
+	, RESP_ORG_ID                   VARCHAR2 (20)
+	, RESP_RESULT                   VARCHAR2 (20)
+	, RESP_ERR_CODE                 VARCHAR2 (20)
+	, RESP_AUTH_CODE                VARCHAR2 (32)
+	, RESP_ACK_TS                   TIMESTAMP (6)
+	, RESP_ACK_ERR                  VARCHAR2 (100)
+	, RESP_ACK_ERR_CD_DTL  			VARCHAR2 (4000)
+	, CBS_RESPONSE_CODE             VARCHAR2 (10)
+	, CBS_AUTH_CODE                 VARCHAR2 (10)
+	, CBS_TRAN_DETAILS              VARCHAR2 (1024)
+	, REQ_TIME                      TIMESTAMP (6) DEFAULT SYSDATE
+	, RESP_TIME                     TIMESTAMP (6) DEFAULT SYSDATE
+	, PRIMARY KEY (MSG_ID)
+ );
+
+CREATE TABLE ISSUER_TRANSACTION_PAYEE
+ (
+	MSG_ID         VARCHAR2 (36) NOT NULL
+	, TYPE          VARCHAR2 (30) NOT NULL
+	, SEQNUM        VARCHAR2 (3) NOT NULL
+	, ADDR          VARCHAR2 (100)
+	, CODE          VARCHAR2 (6)
+	, NAME          VARCHAR2 (100)
+	, AC_ADDRTYPE   VARCHAR2 (50)
+	, AC_IIN        VARCHAR2 (6)
+	, AC_UIDNUM_VID VARCHAR2 (16)
+	, AMOUNT        NUMBER (14, 2)
+	, CURRENCY      VARCHAR2 (10)
+	, CRED_TYPE     VARCHAR2 (20)
+	, CRED_SUB_TYPE VARCHAR2 (20)
+	, CRED_DATA     VARCHAR2 (2048)
+	, CONSTRAINT PK_ITRP PRIMARY KEY (MSG_ID, SEQNUM)
+	, CONSTRAINT FK_ITRP_MSG_ID FOREIGN KEY (MSG_ID) REFERENCES ISSUER_TRANSACTION (MSG_ID)
+ );
+
+CREATE TABLE ISSUER_TRANSACTION_REF
+ (
+	MSG_ID         VARCHAR2 (35) NOT NULL
+	, TYPE          VARCHAR2 (30) NOT NULL
+	, SEQNUM        VARCHAR2 (3) NOT NULL
+	, ADDR          VARCHAR2 (100)
+	, CODE          VARCHAR2 (6)
+	, ORG_AMOUNT    NUMBER (14, 2)
+	, SETT_AMOUNT   NUMBER (14, 2)
+	, SETT_CURRENCY VARCHAR2 (5)
+	, APPROVAL_NO   VARCHAR2 (12)
+	, RESP_CODE     VARCHAR2 (3)
+	, REG_NAME      VARCHAR2 (100)
+	, CONSTRAINT PK_ITRF PRIMARY KEY (MSG_ID, TYPE, SEQNUM)
+	, CONSTRAINT FK_ITRF_MSG_ID FOREIGN KEY (MSG_ID) REFERENCES ISSUER_TRANSACTION (MSG_ID)
+ );
+ 
+ 
+INSERT INTO TXN_PURPOSE (PURPOSE, DESCRIPTION)
+VALUES ('21', 'PURCHASE');
+
+INSERT INTO TXN_PURPOSE (PURPOSE, DESCRIPTION)
+VALUES ('22', 'CASH WITHDRAWAL');
+
+INSERT INTO TXN_PURPOSE (PURPOSE, DESCRIPTION)
+VALUES ('23', 'CASH DEPOSIT');
+
+INSERT INTO TXN_PURPOSE (PURPOSE, DESCRIPTION)
+VALUES ('24', 'FUND TRANSFER');
+
+INSERT INTO TXN_PURPOSE (PURPOSE, DESCRIPTION)
+VALUES ('26', 'ISSUER BIO AUTH');
+
+
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('203', '57', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('119', '57', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('114', '52', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('184', '57', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('116', '51', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('909', '12', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('121', '61', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('907', '91', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('906', '08', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('185', '13', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('911', '91', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('913', '77', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('188', '78', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('180', 'M6', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('904', '30', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('186', '05', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('2UW', 'UW', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('265', '65', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('29', '65', NULL);
+
+INSERT INTO CBS_TO_NPCI_RESPONSE_CODES (CBS_CODE, NPCI_CODE, DESCRIPTION)
+VALUES ('28', '65', NULL);
+
+
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KK', 'KK', '317', 'Number of biometric modalities should notexceed 2', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KP', 'KP', 'K-531', 'Invalid Sub AUA code', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KS', 'KS', '318', 'BFD transaction should not contain othermodalities in input', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KT', 'KT', '331', 'Aadhaar locked by Aadhaar number holderfor all authentications', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KU', 'KU', '332', 'Aadhaar number usage is blocked byAadhaar number holder', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KV', 'KV', '591', 'BFD usage is not allowed as per license', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KW', 'KW', '914', 'Face alone is not allowed as biometricmodality', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KX', 'KX', '915', 'Face auth is not allowed for this age ofresident', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KY', 'KY', '916', 'Invalid face Image format in input', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KZ', 'KZ', '917', 'Invalid face capture type', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('OM', 'OM', 'K-517', 'Expired VID is used in input', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UA', 'UA', '700', 'INVALID DEMOGRAPHIC DATA', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UB', 'UB', '710', 'MISSING PI DATA AS SPECIFIED INUSES', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UC', 'UC', '720', 'MISSING PA DATA AS SPECIFIED INUSES', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UD', 'UD', '730', 'MISSING PIN DATA AS SPECIFIED INUSES', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UE', 'UE', '999', 'UNCLASSIFIED  UIDAI ERROR', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UF', 'UF', '740', 'MISSING OTP DATA AS SPECIFIED INUSES', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UG', 'UG', '800', 'BIOMETRIC TEMPLATES ARE NOT ISOCOMPLIANT.', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UH', 'UH', '810', 'MISSING BIOMETRIC DATA SPECIFIED INUSES', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UI', 'UI', '-', 'UIDAI RESPONSE NOT RECEIVED', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UJ', 'UJ', '721', 'MISSING PFA DATA SPECIFIED IN USES', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UK', 'UK', '820', 'MISSING VALUE FOR BT ATT IN USESELEMENT', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UL', 'UL', '821', 'INVALID VALUE IN BT ATT IN USESELEMENT', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UM', 'UM', '901', 'NO AUTH FACTORS FOUND IN AUTHREQUEST', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UN', 'UN', '902', 'INVALID DOB VALUE IN PI ELEMENT', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UO', 'UO', '910', 'INVALID MV VALUE IN PI ELEMENT', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UP', 'UP', '911', 'INVALID MV VALUE IN PFA ELEMENT', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UQ', 'UQ', '912', 'INVALID MS VALUE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UR', 'UR', '913', 'BOTH PA AND PFA ARE PRESENT', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('US', 'US', '930', 'TECHNICAL ERROR INTERNAL TO UIDAIAUTHENTICATION SERVER', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UT', 'UT', '931', 'TECHNICAL ERROR INTERNAL TO UIDAIAUTHENTICATION SERVER', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UU', 'UU', '932', 'TECHNICAL ERROR INTERNAL TO UIDAIAUTHENTICATION SERVER', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UV', 'UV', '980', 'UNSUPPORTED OPTION', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UY', 'UY', '511', 'INVALID PID XML FORMAT', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UZ', 'UZ', '940', 'UNAUTHORIZED ASA CHANNEL', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('U0', 'U0', '941', 'UNSPECIFIED ASA CHANNEL', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('U1', 'U1', '100', 'PI BASIC ATTR DEMOGRAPHIC DID NOTMATCH', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('U2', 'U2', '200', 'PI ADDRESS ATTR DEMOGRAPHIC NOTMATCH', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('U3', 'U3', '300', 'BIOMETRIC DATA DID NOT MATCH', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('U4', 'U4', '500', 'INVALID ENCRYPTION', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('U5', 'U5', '510', 'INVALID XML FORMAT', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('U6', 'U6', '520', 'INVALID DEVICE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('U7', 'U7', '530', 'INVALID AUTHENTICATOR CODE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('U8', 'U8', '540', 'INVALID Auth XML VERSION', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('U9', 'U9', '550', 'INVALID USES ELEMENT ATTRIBUTES', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VA', 'VA', '571', 'PIN RETRIES RESET', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VB', 'VB', '572', 'INVALID BIOMETRIC POSITION', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VC', 'VC', '573', 'PI USAGE NOT ALLOWED AS PERLICENSE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VD', 'VD', '574', 'PA USAGE NOT ALLOWED AS PERLICENSE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VE', 'VE', '575', 'PFA USAGE NOT ALLOWED AS PERLICENSE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VF', 'VF', '576', 'FMR USAGE NOT ALLOWED AS PERLICENSE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VG', 'VG', '577', 'FIR USAGE NOT ALLOWED AS PERLICENSE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VH', 'VH', '578', 'IIR USAGE NOT ALLOWED AS PERLICENSE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VI', 'VI', '579', 'OTP USAGE NOT ALLOWED AS PERLICENSE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VJ', 'VJ', '580', 'PIN USAGE NOT ALLOWED AS PERLICENSE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VK', 'VK', '581', 'FUZZY USAGE NOT ALLOWED AS PERLICENSE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VL', 'VL', '582', 'LOCAL LANGUAGE USAGE NOTALLOWED AS PER', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VM', 'VM', '934', 'TECHNICAL ERROR INTERNAL TO UIDAIAUTHENTICATION SERVER', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VN', 'VN', '935', 'TECHNICAL ERROR INTERNAL TO UIDAIAUTHENTICATION SERVER', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VO', 'VO', '936', 'TECHNICAL ERROR INTERNAL TO UIDAIAUTHENTICATION SERVER', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VP', 'VP', '937', 'TECHNICAL ERROR INTERNAL TO UIDAIAUTHENTICATION SERVER', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VQ', 'VQ', '938', 'TECHNICAL ERROR INTERNAL TO UIDAIAUTHENTICATION SERVER', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VR', 'VR', '939', 'TECHNICAL ERROR INTERNAL TO UIDAIAUTHENTICATION SERVER', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VS', 'VS', '811', 'BIOMETRIC DATA COULD NOT BEACCESSED', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VT', 'VT', '501', 'Invalid certificate identifier in “ci” attribute of“Skey”', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VU', 'VU', '502', 'INVALID ENCRYPTION OF PID', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VV', 'VV', '503', 'INVALID ENCRYPTION OF HMAC', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VW', 'VW', '542', 'AUA NOT AUTHORIZED FOR ASA. THIS ERROR WILL BE RETURNED IF AUA AND ASA DO NOT HAVE LINKING IN THEPORTAL', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VX', 'VX', '543', 'SUB-AUA NOT ASSOCIATED WITH "AUA"', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VY', 'VY', '541', 'INVALID PID XML VERSION', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('VZ', 'VZ', '311', 'DUPLICATE IRISES USED', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('V0', 'V0', '561', 'REQUEST EXPIRED', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('V1', 'V1', '562', 'INVALID TIME STAMP', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('V2', 'V2', '563', 'Duplicate Request', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('V3', 'V3', '564', 'HMAC VALIDATION FAILED', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('V4', 'V4', '565', 'AUA license key expired', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('V5', 'V5', '566', 'Invalid non- decryptable license key', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('V6', 'V6', '567', 'INVALID INPUT', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('V7', 'V7', '568', 'UNSUPPORTD LANGUAGE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('V8', 'V8', '569', 'DIGITAL SIGNATURE VERIFICATIONFAILED', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('V9', 'V9', '570', 'INVALID KEY INFO IN DIGITALSIGNATURE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('W0', 'W0', '312', 'FMR & FIR IN 1 TXN', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('W1', 'W1', '313', 'MORE THAN ONE FINGER IN SINGLE FIR', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('W2', 'W2', '314', 'FMR/FIR EXCEED 10', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('W3', 'W3', '315', 'IIR SHDNT EXCD 2', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('W4', 'W4', '504', 'SESSION KEY EXPIRE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('W5', 'W5', '812', 'BEST FNGR DTCTN NOT DONE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('W6', 'W6', '310', 'DUPLICATE FING USED', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('W7', 'W7', '584', 'INVALD PIN CODE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('W8', 'W8', '585', 'INVALID GEO CODE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('W9', 'W9', '400', 'OTP VALIDATION FAILD', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('X0', 'X0', '401', 'TKN VALDTN FAILED', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('X1', 'X1', '505', 'SYNC KEY USE NOT ALLOWED', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('X2', 'X2', '521', 'INVALID FINGER DEVICE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('X3', 'X3', 'K-521', 'Invalid dc code under Meta Tag', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('X4', 'X4', 'K-520', 'INVALID TID VALUE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('X6', 'X6', '993', 'TECHNICAL ERROR CATEGORY 3', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('X7', 'X7', '997', 'AADHAAR SUSPENDED', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('X8', 'X8', '998', 'INVALID AADHAAR NUMBER OR NON AVAILABILITY OF AADHAAR DATAAADHAR NO DOSENT EXIST INCIDR', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('X9', 'X9', '996', 'AADHAAR CANCELLED', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WA', 'WA', '330', 'RESIDENT LOCKED BIOMETRIC', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WB', 'WB', '316', 'NUMBER OF FID SHOULD NOT EXCEED1', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WC', 'WC', '402', '“TXN” VALUE DID NOT MATCH WITH “TXN” VALUE USED IN REQUEST OTPAPI', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WD', 'WD', '512', 'INVALID RESIDENT CONSENT IN “RC”ATTRIBUTE OF “AUTH”', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WF', 'WF', '524', 'INVALID MI CODE UNDER META TAG', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WI', 'WI', '527', 'INVALID MC CODE UNDER META TAG', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WL', 'WL', '586', 'FID USAGE NOT ALLOWED AS PERLICENSE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WM', 'WM', '587', 'NAME SPACE NOT ALLOWED', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WN', 'WN', '588', 'REGISTERED DEVICE NOT ALLOWED ASPER LICENSE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WO', 'WO', '590', 'PUBLIC DEVICE NOT ALLOWED AS PERLICENSE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WP', 'WP', '822', 'INVALID VALUE IN THE “BS” ATTRIBUTEOF “BIO” ELEMENT WITHIN “PID”', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WQ', 'WQ', '950', 'OTP STORE RELATED TECHNICALERROR', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WR', 'WR', '951', 'BIOMETRIC LOCK RELATED TECHNICALERROR', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WS', 'WS', '995', 'AADHAAR SUSPENDED BY COMPETENTAUTHORITY', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WE', 'WE', '551', 'INVALID “TID” VALUE.', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WJ', 'WJ', '553', 'REGISTERED DEVICES CURRENTLYNOT SUPPORTED', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WK', 'WK', '554', 'PUBLIC DEVICES ARE NOT ALLOWEDTO BE USED', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WG', 'WG', '555', 'RDSID IS INVALID AND NOT PART OFCERTIFICATION REGISTRY', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WH', 'WH', '556', 'RDSVER IS INVALID AND NOT PART OFCERTIFICATION REGISTRY', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WU', 'WU', '557', 'DPID IS INVALID AND NOT PART OFCERTIFICATION REGISTRY', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WV', 'WV', '558', 'INVALID DIH', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WX', 'WX', '559', 'DEVICE CERTIFICATE HAS EXPIRED', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WY', 'WY', '560', 'DP MASTER CERTIFICATE HAS EXPIRED', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WZ', 'WZ', '933', 'TECHNICAL ERROR', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('WW', 'WW', '552', 'WADH validation fail in RD', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('O1', 'O1', '110', 'AADHAAR NUMBER DOES NOT HAVEVERIFIED MOBILE/EMAIL', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('O2', 'O2', '111', 'AADHAAR NUMBER DOES NOT HAVEVERIFIED MOBILE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('O3', 'O3', '112', 'AADHAAR NUMBER DOES NOT HAVEBOTH EMAIL AND MOBILE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('OI', 'OI', '113', 'AADHAAR NUMBER DOES NOT HAVEVERIFIED EMAIL ID', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('OJ', 'OJ', '114', 'AADHAAR NUMBER DOES NOT HAVEVERIFIED MOBILE NUMBER', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('OK', 'OK', '115', 'AADHAAR NUMBER DOES NOT HAVEEMAIL MOBILE NUMBER', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('OL', 'OL', '952', 'User trying OTP generation multiple times inshort time', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('OQ', 'OQ', '523', 'Invalid ts attribute. Either it is not in correctformat or is older than 20 min', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('K1', 'K1', 'K-100', 'RESIDENT AUTHENTICATION FAILED', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('K2', 'K2', 'K-200', 'RESIDENT DATA CURRENTLY NOTAVAILABLE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('K3', 'K3', 'K-540', 'INVALID KYC XML', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('K4', 'K4', 'K-541', 'INVALID E-KYC API VERSION', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('K5', 'K5', 'K-542', 'INVALID RESIDENT CONSENT (“RC”ATTRIBUTE IN “KYC” ELEMENT)', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('K6', 'K6', 'K-543', 'INVALID TIMESTAMP (“TS” ATTRIBUTE IN“KYC” ELEMENT)', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('K7', 'K7', 'K-544', 'INVALID RESIDENT AUTH TYPE (“RA” ATTRIBUTE IN “KYC” ELEMENT DOESNOT MATCH WHAT IS IN PID BLOCK)', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('K8', 'K8', 'K-545', 'RESIDENT HAS OPTED-OUT OF THISSERVICE', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('K9', 'K9', 'K-550', 'INVALID USES ATTRIBUTE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KA', 'KA', 'K-551', 'INVALID “TXN” NAMESPACE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KB', 'KB', 'K-552', 'INVALID LICENSE KEY', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KC', 'KC', 'K-569', 'DIGITAL SIGNATURE VERIFICATIONFAILED FOR E-KYC XML', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KD', 'KD', 'K-570', 'INVALID KEY INFO IN DIGITAL SIGNATURE FOR E-KYC XML (IT IS EITHER EXPIRED, OR DOES NOTBELONG TO THE AUA OR IS NOT CREATED BY A WELL-KNOWN CERTIFICATION AUTHORITY)', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KE', 'KE', 'K-600', 'AUA IS INVALID OR NOT ANAUTHORIZED KUA', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KF', 'KF', 'K-601', 'ASA IS INVALID OR NOT ANAUTHORIZED KSA', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KG', 'KG', 'K-602', 'KUA ENCRYPTION KEY NOT AVAILABLE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KH', 'KH', 'K-603', 'KSA ENCRYPTION KEY NOT AVAILABLE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KI', 'KI', 'K-604', 'KSA SIGNATURE NOT ALLOWED', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KJ', 'KJ', 'K-605', 'NEITHER KUA KEY NOR KSAENCRYPTION KEY ARE AVAILABLE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KL', 'KL', 'K-955', 'TECHNICAL FAILURE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KM', 'KM', 'K-999', 'UNKNOWN ERROR', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KN', 'KN', 'K-956', 'TECHNICAL FAILURE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KO', 'KO', 'K-547', 'Invalid value for wadh attribute within PIDblock', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KQ', 'KQ', 'K-515', 'Invalid VID number in input', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('KR', 'KR', 'K-546', 'Invalid value for “pfr” attribute', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('Z1', 'Z1', 'K-514', 'Invalid UID Token in input', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('Y1', 'Y1', '528', 'Key rotation policy request is not meetingUIDAI key rotation policy', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('XA', 'XA', '513', 'Invalid protobuff format', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('03', '36', '-', 'Invalid Merchant', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('05', '02', '-', 'DO NOT HONOR', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('08', 'CU', '-', 'ISSUER CBS UN-AVAILABLE', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('12', '01', '-', 'Invalid transaction', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('13', '06', '-', 'INVALID AMOUNT', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('20', '07', '-', 'ISSUER DECLINE - UNSPECIFIEDREASON', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('22', '31', '-', 'REVERSAL BY ACQUIRER TERMINAL', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('30', '18', '-', 'ACQUIRER FORMAT ERROR', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('51', '24', '-', 'INSUFFICIENT FUNDS', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('52', '12', '-', 'INVALID ACCOUNT ( AADHAAR NOTLINKED )', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('53', '12', '-', 'NO SAVING ACCOUNT', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('57', '30', '-', 'FREEZE/FROZEN ACCOUNT', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('59', '20', '-', 'Suspected Fraud', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('61', '14', '-', 'Exceeds withdrawal amount limit', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('65', '15', '-', 'Exceeds withdrawal frequency limit', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('68', '50', NULL, 'REVERSAL BY ACQUIRER UPON TIMEOUT', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('71', '71', '-', 'Deemed Acceptance', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('72', '72', '-', 'version not supported by Issuer', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('76', '76', '-', 'Unable to locate BAV', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('90', '01', NULL, 'Cut-off in process', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('91', 'ID', '-', 'ISSUER RESPONDED WITH RC-91', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('92', '86', '-', 'ISSUER IDENTIFICATION INCORRECT', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('94', '38', '-', 'Duplicate Transaction', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('96', '39', NULL, 'System malfunction', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('40', '40', NULL, 'REVERSAL BY NPCI NOTACKNOWLEDGED BY ISSUER', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('41', '41', NULL, 'REVERSAL BY ACQUIRER NOTACKNOWLEDGED BY ISSUER', 'Technical');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('UW', 'UW', '-', 'TRANSACTION AMOUNT EXCEED LIMIT', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('M4', 'M4', '-', 'NRE ACCOUNT', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('M6', 'M6', '-', 'BANK  SETTLEMENT LIMIT EXCEEDED', 'Business');
+INSERT INTO AEPS_RESPONSE_CODES VALUES ('M3', 'M3', '-', 'DORMANT ACCOUNT', 'Business');
+
+
+
+
+
+
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('merchant.acquirer.port', '6012', 'Merchant app acquiring listen port.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('microatm_cbs.acquirer.port', '8081', 'Micro-ATM app & CBS acquiring listen port.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('cbs.baseurl', '172.23.225.70:30147', 'CBS IP and Port.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('cbs.connectTimeout', '5000', 'CBS connect timeout.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('cbs.readTimeout', '20000', 'CBS read timeout.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('cbs.type', 'finacle', 'CBS Type.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('hearbeat.fixedDelay', '180000', 'Time distance between two hearbeats in ms.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('hearbeat.initialDelay', '5000', 'First time delay for hearbeat in ms.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('heartbeat.enabled', 'false', 'flag to enable and disable heartbeat.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('participationCode', 'DPU', 'Participation Code given to bank by NPCI.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('orgId', '200248', 'OrgId given to bank by NPCI.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('iin', '608314', 'IIN of bank');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('product.version', '2.0', 'NPCI product version code.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('npci.port', '443', 'NPCI destincation port');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('npci.connectTimeout', '5000', 'NPCI connect timeout.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('npci.readTimeout', '30000', 'NPCI read timeout.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('npci.signer.certificate.location', 'classpath:ini/npciSignerCertificate.crt', 'NPCI signer public certificate location relative to application root directory.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('server.port', '443', 'NPCI inbound request listen port');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('server.ssl.key-alias', 'ssl', 'SSL Keystore location of server.port alias.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('server.ssl.key-store', 'classpath:ini/ssl.pfx', 'SSL Keystore location of server.port relative to application root directory.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('server.ssl.key-store-password', 'Ippb@2023', 'Password of server.port SSL keystore.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('server.ssl.key-store-type', 'PKCS12', 'Type of SSL keystore of server.port.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('signer.alias', 'signer', 'Alias of signer certificate in Bank Signer Keystore');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('signer.keystore.location', 'classpath:ini/signer.pfx', 'Bank Signer Keystore location relative to application root directory.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('signer.keystore.password', 'abc1234', 'Password of Bank Signer Keystore.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('uidai.ac', 'STGIPPB001', 'AUA code.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('uidai.sa', 'STGIPPB001', 'Sub AUA code');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('uidai.lk', 'MK7aa4TsSEVDQTBEKQeFAYNWRmnG6lRsKxwIyYZ9kNUv982x7e3XkA4', 'AUA License key.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('uidai.rc', 'Y', 'Consent of aadhar user.');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('uidai.tid', 'registered', 'Terminal Id for AUA');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('uidai.ver', '2.5', 'Aadhar Authentication Version');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('npci.protocol', 'https', 'NPCI protocol if https/http');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('switchNodeIps', '172.23.225.50,172.23.225.51', 'switch IP''s IN a cluster');
+INSERT INTO AEPS_CONFIG(PARAM, VALUE, DESCRIPTION) VALUES('npci.ips', '192.168.63.173', 'NPCI ip''s to send requests and responses.');
+
+INSERT INTO AEPS_CONFIG (PARAM, VALUE, DESCRIPTION)
+VALUES ('uidai.ver', '2.5', 'Aadhar Authentication Version');
+
+
+
+
+
+
+
+
+
+
+CREATE TABLE ACQUIRER_BIO_AUTH_PURCHASE
+ (
+	  MSG_ID                        VARCHAR2 (35) NOT NULL
+	, MSG_TS                        TIMESTAMP (6)
+	, PROD_TYPE                     VARCHAR2 (10)
+	, ORG_ID                        VARCHAR2 (20)
+	, MSG_VER                       VARCHAR2 (5)
+	, TXN_ID                        VARCHAR2 (35) NOT NULL
+	, TXN_TYPE                      VARCHAR2 (20) NOT NULL
+	, PURPOSE                       VARCHAR2 (2)
+	, CUST_REF                      VARCHAR2 (12)
+	, REF_ID                        VARCHAR2 (35)
+	, REF_URL                       VARCHAR2 (35)
+	, NOTE                          VARCHAR2 (50)
+	, TXN_TS                        TIMESTAMP (6)
+	, INITIATION_MODE               VARCHAR2 (2)
+	, PAYER_ADDR                    VARCHAR2 (255)
+	, PAYER_NAME                    VARCHAR2 (99)
+	, PAYER_SEQ_NUM                 VARCHAR2 (3)
+	, PAYER_CODE                    VARCHAR2 (4)
+	, PAYER_TYPE                    VARCHAR2 (10)
+	, PAYER_IDENTITY_TYPE           VARCHAR2 (10)
+	, PAYER_IDENTITY_VERIFIED_NAME  VARCHAR2 (99)
+	, PAYER_INFO_IDENTITY_ID        VARCHAR2 (100)
+	, PAYER_RATING_VERIFIED_ADDRESS VARCHAR2 (5)
+	, PAYER_DEVICE_DETAILS          VARCHAR2 (2048)
+	, PAYER_AC_ADDR_TYPE            VARCHAR2 (20)
+	, PAYER_AC_IIN                  VARCHAR2 (6)
+	, PAYER_AC_UIDNUM_VID           VARCHAR2 (16)
+	, PAYER_CRED_TYPE               VARCHAR2 (20)
+	, PAYER_CRED_SUB_TYPE           VARCHAR2 (20)
+	, PAYER_AMOUNT                  NUMBER (14, 2)
+	, PAYER_CURRENCY                VARCHAR2 (5)
+	, REQ_ACK_TS                    TIMESTAMP (6)
+	, REQ_ACK_ERR                   VARCHAR2 (100)
+	, REQ_ACK_ERR_CD_DTL            VARCHAR2 (4000)
+	, RESP_TXN_TS                   TIMESTAMP (6)
+	, RESP_MSG_ID                   VARCHAR2 (35)
+	, RESP_MSG_TS                   TIMESTAMP (6)
+	, RESP_ORG_ID                   VARCHAR2 (20)
+	, RESP_RESULT                   VARCHAR2 (20)
+	, RESP_ERR_CODE                 VARCHAR2 (20)
+	, RESP_AUTH_CODE                VARCHAR2 (32)
+	, RESP_UIDAI_INFO               VARCHAR2 (2048)
+	, RESP_ACK_TS                   TIMESTAMP (6)
+	, RESP_ACK_ERR                  VARCHAR2 (100)
+	, RESP_ACK_ERR_CD_DTL           VARCHAR2 (4000)
+	, CBS_RESPONSE_CODE             VARCHAR2 (10)
+	, CBS_AUTH_CODE                 VARCHAR2 (10)
+	, AGENT_DETAILS 				VARCHAR2 (1024)
+	, RECON_INDICATOR 				VARCHAR2 (256)
+	, CBS_TRAN_DETAILS              VARCHAR2 (1024)
+	, IS_REVERSED					VARCHAR2 (1) default 'N'
+	, REV_CBS_RESPONSE_CODE         VARCHAR2 (10)
+	, REV_CBS_AUTH_CODE             VARCHAR2 (10)
+	, REV_RECON_INDICATOR 			VARCHAR2 (256)
+	, REV_CBS_TRAN_DETAILS          VARCHAR2 (1024)
+	, CHANNEL                       VARCHAR2 (20)
+	, REQ_TIME                      TIMESTAMP DEFAULT SYSDATE
+	, RESP_TIME                     TIMESTAMP DEFAULT SYSDATE
+	, EXCEPTION      				BLOB
+	, PRIMARY KEY (MSG_ID)
+ );
