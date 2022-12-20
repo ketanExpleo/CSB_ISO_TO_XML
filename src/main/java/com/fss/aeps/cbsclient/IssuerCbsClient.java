@@ -3,6 +3,7 @@ package com.fss.aeps.cbsclient;
 import com.fss.aeps.jaxb.ReqBalEnq;
 import com.fss.aeps.jaxb.ReqChkTxn;
 import com.fss.aeps.jaxb.ReqPay;
+import com.fss.aeps.jpa.acquirer.AcquirerTransaction;
 import com.fss.aeps.jpa.issuer.IssuerTransaction;
 
 import reactor.core.publisher.Mono;
@@ -25,6 +26,8 @@ public interface IssuerCbsClient {
 
 	public Mono<CBSResponse> debitReversal(final ReqPay request, IssuerTransaction original);
 
-
+	Mono<CBSResponse> accountingReversal(final AcquirerTransaction transaction);
+    
+    Mono<CBSResponse> accountingCW(final ReqPay request);
 
 }
