@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import com.fss.aeps.jaxb.PayConstant;
 import com.fss.aeps.jaxb.TxnSubType;
-import com.fss.aeps.jpa.issuer.IssuerAdvice;
 import com.fss.aeps.jpa.issuer.IssuerBalanceEnquiry;
 import com.fss.aeps.jpa.issuer.IssuerReversal;
 import com.fss.aeps.jpa.issuer.IssuerTransaction;
@@ -36,15 +35,4 @@ public class IssuerRepositories {
 
 	}
 
-	public interface IssuerAdviceRepository extends CrudRepository<IssuerAdvice, String> {
-
-		public IssuerAdvice findFirstByTxnIdAndTxnTypeAndPurpose(String txnId, PayConstant type, String purpose);
-
-		public IssuerAdvice findFirstByTxnIdAndDepositId(String id, String depositId);
-
-		public IssuerAdvice findFirstByTxnIdAndOrgRrn(String id, String orgRrn);
-
-		public IssuerAdvice findFirstByOrgTxnId(String id);
-
-	}
 }

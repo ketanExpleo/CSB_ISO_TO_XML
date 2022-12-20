@@ -5,10 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.fss.aeps.jaxb.PayConstant;
 import com.fss.aeps.jaxb.TxnSubType;
-import com.fss.aeps.jpa.acquirer.AcquirerAdvice;
 import com.fss.aeps.jpa.acquirer.AcquirerBalanceEnquiry;
-import com.fss.aeps.jpa.acquirer.AcquirerBioAuth;
-import com.fss.aeps.jpa.acquirer.AcquirerBioAuthPurchase;
 import com.fss.aeps.jpa.acquirer.AcquirerReversal;
 import com.fss.aeps.jpa.acquirer.AcquirerTransaction;
 
@@ -21,19 +18,6 @@ public class AcquirerRepositories {
 
 	}
 
-	public interface AcquirerAdviceRepository extends CrudRepository<AcquirerAdvice, String> {
-
-		public AcquirerAdvice findFirstByTxnIdAndTxnTypeAndTxnSubType(String txnId, PayConstant txnType,
-				TxnSubType txnSubType);
-	}
-
-	public interface AcquirerBioAuthRepository extends CrudRepository<AcquirerBioAuth, String> {
-
-	}
-
-	public interface AcquirerBioAuthPurchaseRepository extends CrudRepository<AcquirerBioAuthPurchase, String> {
-
-	}
 
 	public interface AcquirerReversalRepository extends CrudRepository<AcquirerReversal, String> {
 

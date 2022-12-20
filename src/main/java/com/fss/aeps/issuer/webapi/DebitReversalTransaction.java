@@ -95,7 +95,7 @@ public class DebitReversalTransaction  extends IIssuerTransaction<ReqPay, RespPa
 			}
 			else {
 				reversal.setOrgTxnMsgId(original.getMsgId());
-				final Mono<CBSResponse> responseMono = cbsClient.debitReversal(request, original);
+				final Mono<CBSResponse> responseMono = cbsClient.issuerDebitReversal(request, original);
 				if(responseMono != null) responseMono.subscribe(cbsResponse -> {
 					reversal.setCbsResponseCode(cbsResponse.responseCode);
 					reversal.setCbsAuthCode(cbsResponse.authCode);

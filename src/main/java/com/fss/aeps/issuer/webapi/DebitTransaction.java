@@ -83,7 +83,7 @@ public class DebitTransaction extends IIssuerTransaction<ReqPay, RespPay> {
 			response.setResp(resp);
 			txn.setRiskScores(null);
 
-			final Mono<CBSResponse> responseMono = cbsClient.debit(request);
+			final Mono<CBSResponse> responseMono = cbsClient.issuerDebit(request);
 			if(responseMono != null) responseMono.subscribe(cbsResponse -> {
 				transaction.setCbsResponseCode(cbsResponse.responseCode);
 				transaction.setCbsAuthCode(cbsResponse.authCode);

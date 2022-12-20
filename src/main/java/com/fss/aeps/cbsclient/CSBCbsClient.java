@@ -54,7 +54,7 @@ public class CSBCbsClient implements CbsClient {
 	}
 
 	@Override
-	public Mono<CBSResponse> balance(ReqBalEnq reqBalEnq) {
+	public Mono<CBSResponse> issuerBE(ReqBalEnq reqBalEnq) {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			Service1 service1 = getService();
@@ -67,7 +67,7 @@ public class CSBCbsClient implements CbsClient {
 			details.Channel_Type = "1";
 			details.Device_ID = "UY185633";
 			details.IIN = "607082";
-			details.Network_Type = "1";
+			details.Network_Type = "3";
 			details.Transaction_Code = "1";
 			details.Transaction_Type = "003";
 			details.Txn_Amount = new BigDecimal(0.00);
@@ -106,14 +106,13 @@ public class CSBCbsClient implements CbsClient {
 			}
 			return Mono.just(cbsResponse);
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.info("error processing balance enquiry request at CBS. {}", e.getMessage());
+			logger.error("error processing balance enquiry request at CBS.", e);
 		}
 		return null;
 	}
 
 	@Override
-	public Mono<CBSResponse> miniStatement(ReqBalEnq reqBalEnq) {
+	public Mono<CBSResponse> issuerMS(ReqBalEnq reqBalEnq) {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			Service1 service1 = getService();
@@ -126,7 +125,7 @@ public class CSBCbsClient implements CbsClient {
 			details.Channel_Type = "1";
 			details.Device_ID = "UY185633";
 			details.IIN = "607082";
-			details.Network_Type = "1";
+			details.Network_Type = "3";
 			details.Transaction_Code = "1";
 			details.Transaction_Type = "004";
 			details.Txn_Amount = new BigDecimal(0.00);
@@ -179,8 +178,7 @@ public class CSBCbsClient implements CbsClient {
 			}
 			return Mono.just(cbsResponse);
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.info("error processing mini statement request at CBS.{}", e.getMessage());
+			logger.error("error processing mini statement request at CBS.", e);
 		}
 		return null;
 	}
@@ -207,7 +205,7 @@ public class CSBCbsClient implements CbsClient {
 	}
 
 	@Override
-	public Mono<CBSResponse> debit(ReqPay reqPay) {
+	public Mono<CBSResponse> issuerDebit(ReqPay reqPay) {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			Service1 service1 = getService();
@@ -220,7 +218,7 @@ public class CSBCbsClient implements CbsClient {
 			details.Channel_Type = "1";
 			details.Device_ID = "UY185633";
 			details.IIN = "607082";
-			details.Network_Type = "1";
+			details.Network_Type = "3";
 			details.Transaction_Code = "1";
 			details.Transaction_Type = "002";
 			details.Txn_Amount = reqPay.getPayer().getAmount().getValue();
@@ -285,15 +283,14 @@ public class CSBCbsClient implements CbsClient {
 			}
 			return Mono.just(cbsResponse);
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.info("error processing cash withdraw request at CBS.{}", e.getMessage());
+			logger.error("error processing CW request at CBS.", e);
 		}
 		return null;
 	}
 
 
 	@Override
-	public Mono<CBSResponse> debitReversal(ReqPay request, IssuerTransaction original) {
+	public Mono<CBSResponse> issuerDebitReversal(ReqPay request, IssuerTransaction original) {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			Service1 service1 = getService();
@@ -306,13 +303,20 @@ public class CSBCbsClient implements CbsClient {
 			details.Channel_Type = "1";
 			details.Device_ID = "UY185633";
 			details.IIN = "607082";
-			details.Network_Type = "1";
-			details.Transaction_Code = "1";
+			details.Network_Type = "3";
+			details.Transaction_Code = "2";
 			details.Transaction_Type = "002";
 			details.Txn_Amount = original.getPayerAmount();
 			details.Txn_Currency = "INR";
 			details.Txn_Timestamp = sdf.format(original.getTxnTs());
 			details.Txn_ID = original.getCustRef();
+			
+			details.Orig_Device_ID = "UY185633";
+			details.Orig_Txn_Timestamp = sdf.format(original.getTxnTs());
+			details.Orig_Txn_ID =  original.getCustRef();
+			details.Auth_ID =  original.getCustRef();
+			details.Reversal_resp_code =  request.getTxn().getOrgRespCode();
+			
 			StringWriter writer = new StringWriter();
 			CONTEXT.createMarshaller().marshal(details, writer);
 			IService1 iService1 = service1.getBasicHttpBindingIService1();
@@ -371,15 +375,14 @@ public class CSBCbsClient implements CbsClient {
 			}
 			return Mono.just(cbsResponse);
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.info("error processing cash withdraw request at CBS.{}", e.getMessage());
+			logger.error("error processing CW reversal at CBS.", e);
 		}
 		return null;
 	
 	}
 
 	@Override
-	public Mono<CBSResponse> accountingCW(final ReqPay reqPay) {
+	public Mono<CBSResponse> acqAccountingCW(final ReqPay reqPay) {
 		 try {
 	            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	            final Service1 service1 = this.getService();
@@ -457,13 +460,13 @@ public class CSBCbsClient implements CbsClient {
 	            return Mono.just(cbsResponse);
 	        }
 	        catch (Exception e) {
-	            CSBCbsClient.logger.error("error processing cash withdrawal accounting at CBS.", (Throwable)e);
+	        	logger.error("error processing accountingCW at CBS.", e);
 	            return Mono.empty();
 	        }
 	}
 	
 	@Override
-	public Mono<CBSResponse> accountingReversal(final AcquirerTransaction transaction) {
+	public Mono<CBSResponse> acqAccountingCWReversal(final AcquirerTransaction transaction) {
 		try {
             final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             final Service1 service1 = this.getService();
@@ -541,7 +544,7 @@ public class CSBCbsClient implements CbsClient {
             return Mono.just(cbsResponse);
         }
         catch (Exception e) {
-            CSBCbsClient.logger.error("error processing cash withdrawal accounting at CBS.", (Throwable)e);
+        	logger.error("error processing accountingReversal at CBS.", e);
             return Mono.empty();
         }
     }

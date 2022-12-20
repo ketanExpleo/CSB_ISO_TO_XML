@@ -9,16 +9,15 @@ import reactor.core.publisher.Mono;
 
 public interface CbsClient {
 
-	public Mono<CBSResponse> balance(final ReqBalEnq reqBalEnq);
+	public Mono<CBSResponse> issuerBE(final ReqBalEnq reqBalEnq);
 
-	public Mono<CBSResponse> miniStatement(final ReqBalEnq reqBalEnq);
+	public Mono<CBSResponse> issuerMS(final ReqBalEnq reqBalEnq);
+	
+	public Mono<CBSResponse> issuerDebit(ReqPay request);
 
-	public Mono<CBSResponse> debit(ReqPay request);
+	public Mono<CBSResponse> issuerDebitReversal(final ReqPay request, IssuerTransaction original);
 
-	public Mono<CBSResponse> debitReversal(final ReqPay request, IssuerTransaction original);
+	public Mono<CBSResponse> acqAccountingCW(final ReqPay request);
 
-	public Mono<CBSResponse> accountingReversal(final AcquirerTransaction transaction);
-    
-	public Mono<CBSResponse> accountingCW(final ReqPay request);
-
+	public Mono<CBSResponse> acqAccountingCWReversal(final AcquirerTransaction transaction);
 }

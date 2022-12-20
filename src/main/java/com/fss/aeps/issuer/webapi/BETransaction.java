@@ -65,7 +65,7 @@ public class BETransaction extends IIssuerTransaction<ReqBalEnq, RespBalEnq> {
 			resp.setReqMsgId(request.getHead().getMsgId());
 			response.setResp(resp);
 
-			final Mono<CBSResponse> responseMono = cbsClient.balance(request);
+			final Mono<CBSResponse> responseMono = cbsClient.issuerBE(request);
 			if(responseMono != null) responseMono.subscribe(cbsResponse -> {
 				balanceEnquiry.setCbsRespCode(cbsResponse.responseCode);
 				balanceEnquiry.setCbsAuthCode(cbsResponse.authCode);

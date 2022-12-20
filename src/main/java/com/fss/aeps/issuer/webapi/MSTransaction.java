@@ -68,7 +68,7 @@ public class MSTransaction extends IIssuerTransaction<ReqBalEnq, RespBalEnq> {
 			resp.setReqMsgId(request.getHead().getMsgId());
 			response.setResp(resp);
 
-			final Mono<CBSResponse> responseMono = cbsClient.miniStatement(request);
+			final Mono<CBSResponse> responseMono = cbsClient.issuerMS(request);
 			if(responseMono != null) responseMono.subscribe(cbsResponse -> {
 				miniStatement.setCbsRespCode(cbsResponse.responseCode);
 				miniStatement.setCbsAuthCode(cbsResponse.authCode);

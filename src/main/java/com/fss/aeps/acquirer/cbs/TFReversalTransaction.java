@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fss.aeps.AppConfig;
 import com.fss.aeps.acquirer.core.RevPaySender;
-import com.fss.aeps.cbsclient.AcquirerCbsClient;
 import com.fss.aeps.cbsclient.CBSResponse;
+import com.fss.aeps.cbsclient.CSBCbsClient;
 import com.fss.aeps.constants.ContextKey;
 import com.fss.aeps.jaxb.AccountDetailType;
 import com.fss.aeps.jaxb.AccountType;
@@ -47,9 +47,9 @@ public class TFReversalTransaction {
 
 	@Autowired
 	private AppConfig appConfig;
-
+	
 	@Autowired
-	private AcquirerCbsClient cbsClient;
+	private CSBCbsClient cbsClient;
 
 	@Autowired
 	private AcquirerTransactionService transactionService;
@@ -135,7 +135,7 @@ public class TFReversalTransaction {
 		reversal.context.put(ContextKey.ACQUIRER_REVERSAL, acquirerReversal);
 		final RespPay respPay = appConfig.context.getBean(RevPaySender.class).send(reversal);
 		logger.info("terminal failure reversal request forwarded to npci : "+respPay.getTxn().getId());
-		final CBSResponse cbsResponse =  cbsClient.accountingReversal(acquirerTransaction).block();
+		final CBSResponse cbsResponse =  cbsClient.acqAccountingCWReversal(acquirerTransaction).block();
 		if(cbsResponse != null) logger.info("Terminal Failure Response fro TxnID : "+reversal.getTxn().getId()+" Response Code : "+cbsResponse.responseCode);
 		return ResponseEntity.ok().build();
 	}

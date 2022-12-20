@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 /**
@@ -30,19 +29,19 @@ public class Application {
 
 	public static void main(String[] args) throws IOException {
 		try {
-			System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
-			System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
-			System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
-			System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");
-			System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dumpTreshold", "999999");
 			final SpringApplicationBuilder builder = new SpringApplicationBuilder(Application.class);
 			builder.initializers(new ApplicationInitializer());
-			final ConfigurableApplicationContext context = builder.run();
-			logger.info(context.toString());
+			builder.run();
+			logger.info("application started.");
 		} catch (Exception e) {logger.error("error", e);}
 	}
 
 	private static final boolean init() {
+		System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
+		System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
+		System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
+		System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");
+		System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dumpTreshold", "999999");
 		System.setProperty("jdk.tls.ephemeralDHKeySize", "2048");
 		System.setProperty("jdk.tls.rejectClientInitiatedRenegotiation", "true");
 		System.setProperty("sun.security.ssl.allowUnsafeRenegotiation", "false");

@@ -203,7 +203,7 @@ public class WithdrawalTransaction {
 			final RespPay response = appConfig.context.getBean(ReqPaySender.class).send(request); //, purchaseAccounting.andThen(purchaseReversal)
 			logger.info("[WithdrawalTransaction : process] Response String ::{}",response);
 			if (response.getResp().getResult() == ResultType.SUCCESS) {
-				final CBSResponse accountingResponse = cbsClient.accountingCW(request).block();
+				final CBSResponse accountingResponse = cbsClient.acqAccountingCW(request).block();
 				if(accountingResponse != null) {
 					transaction.setCbsTranDetails(accountingResponse.tranDetails);
 					transaction.setCbsResponseCode(accountingResponse.responseCode);
@@ -215,7 +215,7 @@ public class WithdrawalTransaction {
 				}
 
 				if(accountingResponse == null || "911".equalsIgnoreCase(accountingResponse.responseCode) || "91".equalsIgnoreCase(accountingResponse.responseCode)) {
-					cbsClient.accountingReversal(transaction);
+					cbsClient.acqAccountingCWReversal(transaction);
 					response.getResp().setResult(ResultType.FAILURE);
 					response.getResp().setErrCode("91");
 					request.context.put(ContextKey.ORG_RESP_CODE, "22");
