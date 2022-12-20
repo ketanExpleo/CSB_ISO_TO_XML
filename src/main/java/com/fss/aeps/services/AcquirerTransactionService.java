@@ -106,11 +106,9 @@ public class AcquirerTransactionService {
 
 		final AcquirerChannel channel = (AcquirerChannel) request.context.get(ContextKey.CHANNEL);
 		final String agentDetails = (String) request.context.get(ContextKey.AGENT_DETAILS);
-		final String reconIndicator = (String) request.context.get(ContextKey.RECON_INDICATOR);
 
 		transaction.setChannel(channel);
 		transaction.setAgentDetails(agentDetails);
-		transaction.setReconIndicator(reconIndicator);
 
 		if(request.getPayees() != null) {
 			final List<PayeeType> payees = request.getPayees().getPayee();

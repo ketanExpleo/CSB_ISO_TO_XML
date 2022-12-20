@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fss.aeps.cbsclient.CBSResponse;
-import com.fss.aeps.cbsclient.IssuerCbsClient;
+import com.fss.aeps.cbsclient.CbsClient;
 import com.fss.aeps.constants.ContextKey;
 import com.fss.aeps.constants.ResponseCode;
 import com.fss.aeps.jaxb.Ack;
@@ -51,7 +51,7 @@ public class DebitReversalTransaction  extends IIssuerTransaction<ReqPay, RespPa
 	private NpciClient npciWebClient;
 
 	@Autowired
-	private IssuerCbsClient cbsClient;
+	private CbsClient cbsClient;
 
 	public DebitReversalTransaction(ReqPay request, RespPay response) {
 		super(request, response);

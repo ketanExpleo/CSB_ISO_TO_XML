@@ -1,7 +1,6 @@
 package com.fss.aeps.acquirer.cbs;
 
 import java.io.StringWriter;
-import java.util.Base64;
 
 import com.fss.aeps.acquirer.cbs.fixml.PidData;
 import com.sil.fssswitch.model.BalanceRequest;

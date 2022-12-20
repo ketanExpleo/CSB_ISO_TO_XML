@@ -1,7 +1,6 @@
 package com.fss.aeps.acquirer.cbs;
 
 import java.math.BigDecimal;
-import java.net.Socket;
 import java.util.Date;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -12,19 +11,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.fss.aeps.AppConfig;
-import com.fss.aeps.acquirer.AcquirerChannel;
 import com.fss.aeps.acquirer.core.ReqPaySender;
 import com.fss.aeps.acquirer.core.Templates;
-import com.fss.aeps.acquirer.matm.ReversalTransaction;
-import com.fss.aeps.acquirer.merchant.MerchantRequest;
-import com.fss.aeps.acquirer.merchant.MerchantResponse;
-import com.fss.aeps.cbsclient.AcquirerCbsClient;
 import com.fss.aeps.cbsclient.CBSResponse;
-import com.fss.aeps.cbsclient.CSBClient;
+import com.fss.aeps.cbsclient.CSBCbsClient;
 import com.fss.aeps.constants.ContextKey;
 import com.fss.aeps.constants.Purpose;
 import com.fss.aeps.jaxb.AccountDetailType;
 import com.fss.aeps.jaxb.AccountType;
+import com.fss.aeps.jaxb.AccountType.Detail;
 import com.fss.aeps.jaxb.AddressType;
 import com.fss.aeps.jaxb.AmountType;
 import com.fss.aeps.jaxb.Auth;
@@ -34,6 +29,7 @@ import com.fss.aeps.jaxb.CredsType;
 import com.fss.aeps.jaxb.Data;
 import com.fss.aeps.jaxb.DeviceTagNameType;
 import com.fss.aeps.jaxb.DeviceType;
+import com.fss.aeps.jaxb.DeviceType.Tag;
 import com.fss.aeps.jaxb.Hmac;
 import com.fss.aeps.jaxb.IdentityConstant;
 import com.fss.aeps.jaxb.IdentityType;
@@ -54,8 +50,6 @@ import com.fss.aeps.jaxb.Skey;
 import com.fss.aeps.jaxb.TxnSubType;
 import com.fss.aeps.jaxb.Uses;
 import com.fss.aeps.jaxb.WhiteListedConstant;
-import com.fss.aeps.jaxb.AccountType.Detail;
-import com.fss.aeps.jaxb.DeviceType.Tag;
 import com.fss.aeps.jpa.acquirer.AcquirerTransaction;
 import com.fss.aeps.repository.AcquirerRepositories.AcquirerTransactionRepository;
 import com.fss.aeps.util.ExceptionUtil;
@@ -74,7 +68,7 @@ public class WithdrawalTransaction {
 	private AppConfig appConfig;
 	
 	@Autowired
-	private CSBClient cbsClient;
+	private CSBCbsClient cbsClient;
 	
 	@Autowired
 	@Qualifier(value = "threadpool")

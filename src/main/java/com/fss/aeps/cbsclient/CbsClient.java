@@ -1,14 +1,13 @@
 package com.fss.aeps.cbsclient;
 
 import com.fss.aeps.jaxb.ReqBalEnq;
-import com.fss.aeps.jaxb.ReqChkTxn;
 import com.fss.aeps.jaxb.ReqPay;
 import com.fss.aeps.jpa.acquirer.AcquirerTransaction;
 import com.fss.aeps.jpa.issuer.IssuerTransaction;
 
 import reactor.core.publisher.Mono;
 
-public interface IssuerCbsClient {
+public interface CbsClient {
 
 	public Mono<CBSResponse> balance(final ReqBalEnq reqBalEnq);
 
@@ -16,18 +15,10 @@ public interface IssuerCbsClient {
 
 	public Mono<CBSResponse> debit(ReqPay request);
 
-	public Mono<CBSResponse> creditFundTransfer(final ReqPay reqPay);
-
-	public Mono<CBSResponse> deposit(final ReqPay reqPay);
-
-	public Mono<CBSResponse> depositAdvice(ReqChkTxn reqChkTxn, IssuerTransaction original);
-
-	public Mono<CBSResponse> depositRepeatAdvice(ReqChkTxn reqChkTxn, IssuerTransaction original);
-
 	public Mono<CBSResponse> debitReversal(final ReqPay request, IssuerTransaction original);
 
-	Mono<CBSResponse> accountingReversal(final AcquirerTransaction transaction);
+	public Mono<CBSResponse> accountingReversal(final AcquirerTransaction transaction);
     
-    Mono<CBSResponse> accountingCW(final ReqPay request);
+	public Mono<CBSResponse> accountingCW(final ReqPay request);
 
 }

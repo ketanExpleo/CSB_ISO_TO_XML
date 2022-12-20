@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -32,7 +31,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 
-import com.fss.aeps.acquirer.merchant.MerchantTCPServer;
 import com.fss.aeps.http.filters.SignatureAndLoggingFilter;
 import com.fss.aeps.jaxb.HeadType;
 import com.fss.aeps.jaxb.ProdType;
@@ -211,17 +209,6 @@ public class AppConfig {
 		head.setVer(productVersion);
 		head.setProdType(ProdType.AEPS);
 		return head;
-	}
-
-	@Bean
-	public CommandLineRunner runOnInit() {
-		return new CommandLineRunner() {
-			@Override
-			public void run(String... args) throws Exception {
-				logger.info("executing tasks after initialization.");
-				getExecutor().execute(context.getBean(MerchantTCPServer.class));
-			}
-		};
 	}
 
 	public void printRegisteredFilters() {

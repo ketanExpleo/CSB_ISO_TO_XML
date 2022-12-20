@@ -8,7 +8,6 @@ import static com.fss.aeps.acquirer.AcquirerTransactionMap.payments;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.slf4j.Logger;
@@ -28,9 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fss.aeps.AppConfig;
 import com.fss.aeps.acquirer.IAcquirerTransaction;
-import com.fss.aeps.broadcast.BroadcastClient;
 import com.fss.aeps.constants.ContextKey;
-import com.fss.aeps.constants.Purpose;
 import com.fss.aeps.jaxb.Ack;
 import com.fss.aeps.jaxb.PayConstant;
 import com.fss.aeps.jaxb.ReqBalEnq;
@@ -70,9 +67,6 @@ public class IssuerRequestHandler {
 	@Autowired
 	@Qualifier(value = "threadpool")
 	private ThreadPoolExecutor executor;
-
-	@Autowired
-	private BroadcastClient broadcaster;
 
 	@PostMapping(path = "/ReqHbt/{version}/urn:txnid:{txnid}", produces = MediaType.APPLICATION_XML_VALUE)
 	public Ack heartbeat(@RequestBody ReqHbt request, @PathVariable("version") String version, @PathVariable("txnid") String txnid) {
@@ -128,15 +122,6 @@ public class IssuerRequestHandler {
 		if(request.getTxn().getType() == PayConstant.DEBIT && request.getTxn().getSubType() == TxnSubType.PAY) {
 			executor.execute(context.getBean(DebitTransaction.class, request, new RespPay()));
 		}
-		else if(request.getTxn().getType() == PayConstant.CREDIT && request.getTxn().getSubType() == TxnSubType.PAY) {
-			if(Purpose.DEPOSIT.equals(request.getTxn().getPurpose())) {
-				executor.execute(context.getBean(DepositTransaction.class, request, new RespPay()));
-			} else if(Purpose.FUND_TRANSFER.equals(request.getTxn().getPurpose())) {
-				executor.execute(context.getBean(CreditTransaction.class, request, new RespPay()));
-			} else {
-				executor.execute(context.getBean(CreditTransaction.class, request, new RespPay()));
-			}
-		}
 		else if(request.getTxn().getType() == PayConstant.REVERSAL && request.getTxn().getSubType() == TxnSubType.DEBIT) {
 			executor.execute(context.getBean(DebitReversalTransaction.class, request, new RespPay()));
 		}
@@ -145,122 +130,69 @@ public class IssuerRequestHandler {
 		return ack;
 	}
 
-	@PostMapping(path = "/ReqChkTxn/{version}/urn:txnid:{txnid}", produces = MediaType.APPLICATION_XML_VALUE)
-	public Ack check(@RequestBody ReqChkTxn request, @RequestAttribute(ContextKey.HTTP_CONTEXT) Map<String, Object> httpContext) {
-		final Ack ack = new Ack();
-		ack.setReqMsgId(request.getHead().getMsgId());
-		ack.setTs(new Date());
-		ack.setApi("ReqChkTxn");
-		request.context.put(ContextKey.FUTURE, httpContext.get(ContextKey.FUTURE));
-		request.context.put(ContextKey.REQUEST_ACK, ack);
-		if(request.getTxn().getType() == PayConstant.ADVICE && request.getTxn().getSubType() == TxnSubType.PAY) {
-			executor.execute(context.getBean(DepositAdviceTransaction.class, request, new RespChkTxn()));
-		}
-		return ack;
-	}
 
 	@PostMapping(path = "/RespHbt/{version}/urn:txnid:{txnid}", produces = MediaType.APPLICATION_XML_VALUE)
 	public Ack heartbeatResponse(@RequestBody RespHbt response, @RequestAttribute(ContextKey.HTTP_CONTEXT) Map<String, Object> httpContext) {
-		final boolean isBroadCastedResponse = Boolean.parseBoolean(Objects.toString(httpContext.get(ContextKey.BROADCASTED_RESPONSE)).trim());
-		logger.info(response.getTxn().getId()+" isBroadCastedResponse : "+isBroadCastedResponse);
 		final Ack ack = new Ack();
 		ack.setReqMsgId(response.getHead().getMsgId());
 		ack.setTs(new Date());
 		ack.setApi(response.getClass().getSimpleName());
 		final IAcquirerTransaction<ReqHbt, RespHbt> transaction = heartbeats.remove(TranUtil.getTranKey(response.getTxn()));
-		if(transaction == null && !isBroadCastedResponse) {
-			final byte[] responseBytes = (byte[]) httpContext.get(ContextKey.RAW_RESPONSE_BODY);
-			executor.execute(() -> broadcaster.broadcast(response, responseBytes));
-		}
-		else {
-			response.context.put(ContextKey.FUTURE, httpContext.get(ContextKey.FUTURE));
-			response.context.put(ContextKey.RESPONSE_ACK, ack);
-			executor.execute(() -> transaction.processResponse(response));
-		}
+		response.context.put(ContextKey.FUTURE, httpContext.get(ContextKey.FUTURE));
+		response.context.put(ContextKey.RESPONSE_ACK, ack);
+		executor.execute(() -> transaction.processResponse(response));
 		return ack;
 	}
 
 	@PostMapping(path = "/RespPay/{version}/urn:txnid:{txnid}", produces = MediaType.APPLICATION_XML_VALUE)
 	public Ack pay(@RequestBody RespPay response, @RequestAttribute(ContextKey.HTTP_CONTEXT) Map<String, Object> httpContext) {
-		final boolean isBroadCastedResponse = Boolean.parseBoolean(Objects.toString(httpContext.get(ContextKey.BROADCASTED_RESPONSE)).trim());
-		logger.info(response.getTxn().getId()+" isBroadCastedResponse : "+isBroadCastedResponse);
 		final Ack ack = new Ack();
 		ack.setReqMsgId(response.getHead().getMsgId());
 		ack.setTs(new Date());
 		ack.setApi(response.getClass().getSimpleName());
 		final IAcquirerTransaction<ReqPay, RespPay> transaction = payments.remove(TranUtil.getTranKey(response.getTxn()));
-		if(transaction == null && !isBroadCastedResponse) {
-			final byte[] responseBytes = (byte[]) httpContext.get(ContextKey.RAW_RESPONSE_BODY);
-			executor.execute(() -> broadcaster.broadcast(response, responseBytes));
-		}
-		else {
-			response.context.put(ContextKey.FUTURE, httpContext.get(ContextKey.FUTURE));
-			response.context.put(ContextKey.RESPONSE_ACK, ack);
-			executor.execute(() -> transaction.processResponse(response));
-		}
+		response.context.put(ContextKey.FUTURE, httpContext.get(ContextKey.FUTURE));
+		response.context.put(ContextKey.RESPONSE_ACK, ack);
+		executor.execute(() -> transaction.processResponse(response));
 		return ack;
 	}
 
 	@PostMapping(path = "/RespChkTxn/{version}/urn:txnid:{txnid}", produces = MediaType.APPLICATION_XML_VALUE)
 	public Ack adviceResponse(@RequestBody RespChkTxn response, @RequestAttribute(ContextKey.HTTP_CONTEXT) Map<String, Object> httpContext) {
-		final boolean isBroadCastedResponse = Boolean.parseBoolean(Objects.toString(httpContext.get(ContextKey.BROADCASTED_RESPONSE)).trim());
-		logger.info(response.getTxn().getId()+" isBroadCastedResponse : "+isBroadCastedResponse);
 		final Ack ack = new Ack();
 		ack.setReqMsgId(response.getHead().getMsgId());
 		ack.setTs(new Date());
 		ack.setApi(response.getClass().getSimpleName());
 		final IAcquirerTransaction<ReqChkTxn, RespChkTxn> transaction = advices.remove(TranUtil.getTranKey(response.getTxn()));
-		if(transaction == null && !isBroadCastedResponse) {
-			final byte[] responseBytes = (byte[]) httpContext.get(ContextKey.RAW_RESPONSE_BODY);
-			executor.execute(() -> broadcaster.broadcast(response, responseBytes));
-		}
-		else {
-			response.context.put(ContextKey.FUTURE, httpContext.get(ContextKey.FUTURE));
-			response.context.put(ContextKey.RESPONSE_ACK, ack);
-			executor.execute(() -> transaction.processResponse(response));
-		}
+		response.context.put(ContextKey.FUTURE, httpContext.get(ContextKey.FUTURE));
+		response.context.put(ContextKey.RESPONSE_ACK, ack);
+		executor.execute(() -> transaction.processResponse(response));
 		return ack;
 	}
 
 	@PostMapping(path = "/RespBalEnq/{version}/urn:txnid:{txnid}", produces = MediaType.APPLICATION_XML_VALUE)
 	public Ack balanceResponse(@RequestBody RespBalEnq response, @RequestAttribute(ContextKey.HTTP_CONTEXT) Map<String, Object> httpContext) {
-		final boolean isBroadCastedResponse = Boolean.parseBoolean(Objects.toString(httpContext.get(ContextKey.BROADCASTED_RESPONSE)).trim());
-		logger.info(response.getTxn().getId()+" isBroadCastedResponse : "+isBroadCastedResponse);
 		final Ack ack = new Ack();
 		ack.setReqMsgId(response.getHead().getMsgId());
 		ack.setTs(new Date());
 		ack.setApi(response.getClass().getSimpleName());
 		final IAcquirerTransaction<ReqBalEnq, RespBalEnq> transaction = metas.remove(TranUtil.getTranKey(response.getTxn()));
-		if(transaction == null && !isBroadCastedResponse) {
-			final byte[] responseBytes = (byte[]) httpContext.get(ContextKey.RAW_RESPONSE_BODY);
-			executor.execute(() -> broadcaster.broadcast(response, responseBytes));
-		}
-		else {
-			response.context.put(ContextKey.FUTURE, httpContext.get(ContextKey.FUTURE));
-			response.context.put(ContextKey.RESPONSE_ACK, ack);
-			executor.execute(() -> transaction.processResponse(response));
-		}
+		response.context.put(ContextKey.FUTURE, httpContext.get(ContextKey.FUTURE));
+		response.context.put(ContextKey.RESPONSE_ACK, ack);
+		executor.execute(() -> transaction.processResponse(response));
 		return ack;
 	}
 
 	@PostMapping(path = "/RespBioAuth/{version}/urn:txnid:{txnid}", produces = MediaType.APPLICATION_XML_VALUE)
 	public Ack bioAuthResponse(@RequestBody RespBioAuth response, @RequestAttribute(ContextKey.HTTP_CONTEXT) Map<String, Object> httpContext) {
-		final boolean isBroadCastedResponse = Boolean.parseBoolean(Objects.toString(httpContext.get(ContextKey.BROADCASTED_RESPONSE)).trim());
-		logger.info(response.getTxn().getId()+" isBroadCastedResponse : "+isBroadCastedResponse);
 		final Ack ack = new Ack();
 		ack.setReqMsgId(response.getHead().getMsgId());
 		ack.setTs(new Date());
 		ack.setApi(response.getClass().getSimpleName());
 		final IAcquirerTransaction<ReqBioAuth, RespBioAuth> transaction = authentications.remove(TranUtil.getTranKey(response.getTxn()));
-		if(transaction == null && !isBroadCastedResponse) {
-			final byte[] responseBytes = (byte[]) httpContext.get(ContextKey.RAW_RESPONSE_BODY);
-			executor.execute(() -> broadcaster.broadcast(response, responseBytes));
-		}
-		else {
-			response.context.put(ContextKey.FUTURE, httpContext.get(ContextKey.FUTURE));
-			response.context.put(ContextKey.RESPONSE_ACK, ack);
-			executor.execute(() -> transaction.processResponse(response));
-		}
+		response.context.put(ContextKey.FUTURE, httpContext.get(ContextKey.FUTURE));
+		response.context.put(ContextKey.RESPONSE_ACK, ack);
+		executor.execute(() -> transaction.processResponse(response));
 		return ack;
 	}
 

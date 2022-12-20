@@ -1,4 +1,4 @@
-package com.fss.aeps.acquirer.matm;
+package com.fss.aeps.acquirer.cbs;
 
 import java.util.Set;
 
@@ -130,7 +130,6 @@ public class TFReversalTransaction {
 		});
 		final AcquirerReversal acquirerReversal =  new AcquirerReversal();
 		reversal.context.put(ContextKey.CHANNEL, acquirerTransaction.getChannel());
-		reversal.context.put(ContextKey.RECON_INDICATOR, acquirerTransaction.getReconIndicator()+"_RVSL");
 		reversal.context.put(ContextKey.AGENT_DETAILS, acquirerTransaction.getAgentDetails());
 		reversal.context.put(ContextKey.ORG_TXN_MSG_ID, acquirerTransaction.getMsgId());
 		reversal.context.put(ContextKey.ACQUIRER_REVERSAL, acquirerReversal);

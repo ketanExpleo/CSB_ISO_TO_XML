@@ -90,12 +90,10 @@ public class AcquirerReversalService {
 
 		final AcquirerChannel channel = (AcquirerChannel) request.context.get(ContextKey.CHANNEL);
 		final String agentDetails = (String) request.context.get(ContextKey.AGENT_DETAILS);
-		final String reconIndicator = (String) request.context.get(ContextKey.RECON_INDICATOR);
 		final String orgTxnMsgId = (String) request.context.get(ContextKey.ORG_TXN_MSG_ID);
 
 		reversal.setChannel(channel);
 		reversal.setAgentDetails(agentDetails);
-		reversal.setReconIndicator(reconIndicator);
 		reversal.setOrgTxnMsgId(orgTxnMsgId);
 
 		if(request.getPayees() != null) {

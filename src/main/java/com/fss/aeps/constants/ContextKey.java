@@ -7,7 +7,6 @@ public class ContextKey {
 	public static final String REQUEST_ACK = "REQUEST_ACK";
 	public static final String RESPONSE_ACK = "RESPONSE_ACK";
 	public static final String AGENT_DETAILS = "AGENT_DETAILS";
-	public static final String RECON_INDICATOR = "RECON_INDICATOR";
 	public static final String IS_STATIC_RESPONSE = "IS_STATIC_RESPONSE";
 	public static final String ACQUIRER_REVERSAL = "ACQUIRER_REVERSAL";
 	public static final String ACQUIRER_TRANSACTION = "ACQUIRER_TRANSACTION";

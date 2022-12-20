@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.fss.aeps.AppConfig;
 import com.fss.aeps.cbsclient.CBSResponse;
-import com.fss.aeps.cbsclient.IssuerCbsClient;
+import com.fss.aeps.cbsclient.CbsClient;
 import com.fss.aeps.constants.ContextKey;
 import com.fss.aeps.jaxb.Ack;
 import com.fss.aeps.jaxb.CredsType.Cred;
@@ -47,7 +47,7 @@ public class MSTransaction extends IIssuerTransaction<ReqBalEnq, RespBalEnq> {
 	private IssuerBalanceService balanceService;
 
 	@Autowired
-	private IssuerCbsClient cbsClient;
+	private CbsClient cbsClient;
 
 	private final IssuerBalanceEnquiry miniStatement = new IssuerBalanceEnquiry();
 

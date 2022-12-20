@@ -1,4 +1,4 @@
-package com.fss.aeps.acquirer.matm;
+package com.fss.aeps.acquirer.cbs;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ import com.fss.aeps.util.Generator;
 @Component
 public class ReversalTransaction implements Runnable {
 
-	private static final Logger logger = LoggerFactory.getLogger(PaymentTransaction.class);
+	private static final Logger logger = LoggerFactory.getLogger(ReversalTransaction.class);
 
 	@Autowired
 	private AppConfig appConfig;
@@ -52,8 +52,8 @@ public class ReversalTransaction implements Runnable {
 		reversal.getPayees().getPayee().stream().forEach(p -> {
 			p.setCreds(null);
 		});
+		
 		reversal.context.put(ContextKey.CHANNEL, payRequest.context.get(ContextKey.CHANNEL));
-		reversal.context.put(ContextKey.RECON_INDICATOR, payRequest.context.get(ContextKey.RECON_INDICATOR+"_RVSL"));
 		reversal.context.put(ContextKey.AGENT_DETAILS, payRequest.context.get(ContextKey.AGENT_DETAILS));
 		reversal.context.put(ContextKey.ORG_TXN_MSG_ID, payRequest.getHead().getMsgId());
 		for (int i = 0; i < 4; i++) {

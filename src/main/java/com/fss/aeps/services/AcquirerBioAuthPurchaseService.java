@@ -55,11 +55,9 @@ public class AcquirerBioAuthPurchaseService {
 
 		final AcquirerChannel channel = (AcquirerChannel) request.context.get(ContextKey.CHANNEL);
 		final String agentDetails = (String) request.context.get(ContextKey.AGENT_DETAILS);
-		final String reconIndicator = (String) request.context.get(ContextKey.RECON_INDICATOR);
 
 		transaction.setChannel(channel);
 		transaction.setAgentDetails(agentDetails);
-		transaction.setReconIndicator(reconIndicator);
 
 		if(payer.getInfo() != null) {
 			if(payer.getInfo().getIdentity() != null) {

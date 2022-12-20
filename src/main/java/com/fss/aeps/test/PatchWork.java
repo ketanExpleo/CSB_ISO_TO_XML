@@ -1,19 +1,13 @@
 package com.fss.aeps.test;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import com.fss.aeps.AppConfig;
 import com.fss.aeps.acquirer.AcquirerChannel;
 import com.fss.aeps.acquirer.core.ReqBioAuthSender;
-import com.fss.aeps.acquirer.merchant.MerchantRequest;
 import com.fss.aeps.constants.ContextKey;
 import com.fss.aeps.constants.Purpose;
 import com.fss.aeps.jaxb.AccountDetailType;
@@ -161,14 +155,6 @@ public class PatchWork {
 		.filter(f -> f.getName() == AccountDetailType.IIN).findFirst().get().setValue(payeeIin);
 		request.getPayees().getPayee().get(0).getAc().getDetail().stream()
 		.filter(f -> f.getName() == AccountDetailType.IIN).findFirst().get().setValue("100070");
-	}
-
-	public static String patchOnusPurchaseIin(MerchantRequest merchantRequest) throws IOException {
-		final Resource resource = new ClassPathResource("/application.properties");
-		final Properties properties = PropertiesLoaderUtils.loadProperties(resource);
-		String orgIin = merchantRequest.iin;
-		merchantRequest.iin = properties.getProperty("PURCHASE_IIN");
-		return orgIin;
 	}
 
 	public static void sleep(int i) {

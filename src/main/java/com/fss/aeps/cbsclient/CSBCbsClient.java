@@ -20,7 +20,6 @@ import org.tempuri.IService1;
 import org.tempuri.Service1;
 
 import com.fss.aeps.jaxb.ReqBalEnq;
-import com.fss.aeps.jaxb.ReqChkTxn;
 import com.fss.aeps.jaxb.ReqPay;
 import com.fss.aeps.jpa.acquirer.AcquirerTransaction;
 import com.fss.aeps.jpa.issuer.IssuerTransaction;
@@ -31,11 +30,10 @@ import jakarta.xml.bind.JAXBException;
 import reactor.core.publisher.Mono;
 
 @Component
-public class CSBClient implements IssuerCbsClient {
+public class CSBCbsClient implements CbsClient {
 
-	private static final Logger logger = LoggerFactory.getLogger(CSBClient.class);
+	private static final Logger logger = LoggerFactory.getLogger(CSBCbsClient.class);
 	private static final JAXBContext CONTEXT = getJaxbContext();
-	private static final BigDecimal hundred = new BigDecimal(100.00);
 
 	private Service1 getService() {
 		try {
@@ -50,7 +48,6 @@ public class CSBClient implements IssuerCbsClient {
 		try {
 			return JAXBContext.newInstance(Details.class);
 		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -294,46 +291,91 @@ public class CSBClient implements IssuerCbsClient {
 		return null;
 	}
 
-	@Override
-	public Mono<CBSResponse> creditFundTransfer(ReqPay reqPay) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Mono<CBSResponse> deposit(ReqPay reqPay) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Mono<CBSResponse> depositAdvice(ReqChkTxn reqChkTxn, IssuerTransaction original) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Mono<CBSResponse> depositRepeatAdvice(ReqChkTxn reqChkTxn, IssuerTransaction original) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Mono<CBSResponse> debitReversal(ReqPay request, IssuerTransaction original) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			Service1 service1 = getService();
+			Details details = new Details();
 
-	public static void main(String[] args) throws IOException, JAXBException {
-		String s = "\r\n" + "<Details>\r\n" + "	<Aadhaar_Number/>\r\n" + "	<Txn_Amount/>\r\n" + "	<Txn_Currency/>\r\n"
-				+ "	<BC_ID/>\r\n" + "	<Agent_ID/>\r\n" + "	<Device_ID/>\r\n" + "	<Txn_Timestamp/>\r\n"
-				+ "	<Txn_ID/>\r\n" + "	<Channel_Type/>\r\n" + "	<Transaction_Type/>\r\n"
-				+ "	<Transaction_Code/>\r\n" + "	<Orig_Device_ID/>\r\n" + "	<Orig_Txn_Timestamp/>\r\n"
-				+ "	<Orig_Txn_ID/>\r\n" + "	<Reversal_resp_code/>\r\n" + "	<Network_Type/>\r\n"
-				+ "	<Benf_AadhaarNo/>\r\n" + "	<Account_Type/>\r\n" + "	<Customer_Name/>\r\n" + "	<IIN/>\r\n"
-				+ "	<Status>2</Status>\r\n" + "	<Auth_ID/>\r\n" + "	<Error_Code>ERR001</Error_Code>\r\n"
-				+ "	<Response_XML/>\r\n" + "</Details>";
-		System.err.println(CONTEXT.createUnmarshaller().unmarshal(new ByteArrayInputStream(s.getBytes())));
+			details.Aadhaar_Number = "dbab683e-056d-461c-8c23-72975958e832";
+			details.Account_Type = "1";
+			details.Agent_ID = "20020002";
+			details.BC_ID = "103";
+			details.Channel_Type = "1";
+			details.Device_ID = "UY185633";
+			details.IIN = "607082";
+			details.Network_Type = "1";
+			details.Transaction_Code = "1";
+			details.Transaction_Type = "002";
+			details.Txn_Amount = original.getPayerAmount();
+			details.Txn_Currency = "INR";
+			details.Txn_Timestamp = sdf.format(original.getTxnTs());
+			details.Txn_ID = original.getCustRef();
+			StringWriter writer = new StringWriter();
+			CONTEXT.createMarshaller().marshal(details, writer);
+			IService1 iService1 = service1.getBasicHttpBindingIService1();
+			String responseString = iService1.aepsAadhaarTransaction(writer.toString());
+			logger.info("@@@@ Response String :: {}", responseString);
+			Details response = (Details) CONTEXT.createUnmarshaller()
+					.unmarshal(new ByteArrayInputStream(responseString.getBytes()));
+			logger.info("@@@@ Response :: {}", response);
+			final CBSResponse cbsResponse = new CBSResponse();
+			cbsResponse.authCode = response.Auth_ID;
+			cbsResponse.customerName = response.Customer_Name;
+			cbsResponse.responseMessage = "SUCCESS";
+			// cbsResponse.responseCode = response.Error_Code.substring(3);
+			logger.info("@@@@@ Error_Code :: {}", response.Error_Code);
+			// logger.info("@@@@@ response code :: {}",cbsResponse.responseCode);
+			if ("ERR000".equals(response.Error_Code)) {
+				//cbsResponse.responseCode = "57";
+				cbsResponse.responseCode = response.Error_Code.substring(3);
+				logger.info("@@@@@ response code :: {}", cbsResponse.responseCode);
+				logger.info("@@@@@ before conversion Balance AMT :: {}", response.Response_XML.Bal.Amt);
+				BigDecimal bal = response.Response_XML.Bal.Amt;
+				String amount = Generator.amountToFormattedString12(bal.toBigInteger());
+				if (amount != null) {
+					cbsResponse.balance = "0001356" + (Integer.parseInt(amount) < 0 ? "D" : "C") + amount;
+					logger.info("@@@@@ after conversion Balance AMT :: {}", cbsResponse.balance);
+				}
+			}else if ("ERR021".equals(response.Error_Code)) {
+				cbsResponse.responseCode = "52";
+				logger.info("@@@@@ response code :: {}", cbsResponse.responseCode);
+				logger.info("@@@@@ before conversion Balance AMT :: {}", response.Response_XML.Bal.Amt);
+				BigDecimal bal = response.Response_XML.Bal.Amt;
+				String amount = Generator.amountToFormattedString12(bal.toBigInteger());
+				if (amount != null) {
+					cbsResponse.balance = "0001356" + (Integer.parseInt(amount) < 0 ? "D" : "C") + amount;
+					logger.info("@@@@@ after conversion Balance AMT :: {}", cbsResponse.balance);
+				}
+			}else if ("ERR053".equals(response.Error_Code)) {
+				cbsResponse.responseCode = "51";
+				logger.info("@@@@@ response code :: {}", cbsResponse.responseCode);
+				logger.info("@@@@@ before conversion Balance AMT :: {}", response.Response_XML.Bal.Amt);
+				BigDecimal bal = response.Response_XML.Bal.Amt;
+				String amount = Generator.amountToFormattedString12(bal.toBigInteger());
+				if (amount != null) {
+					cbsResponse.balance = "0001356" + (Integer.parseInt(amount) < 0 ? "D" : "C") + amount;
+					logger.info("@@@@@ after conversion Balance AMT :: {}", cbsResponse.balance);
+				}
+			}else if ("ERR050".equals(response.Error_Code)) {
+				cbsResponse.responseCode = "91";
+				logger.info("@@@@@ response code :: {}", cbsResponse.responseCode);
+			}else if ("ERR064".equals(response.Error_Code)) {
+				cbsResponse.responseCode = "UW";
+				logger.info("@@@@@ response code :: {}", cbsResponse.responseCode);
+			}
+			else {
+				cbsResponse.responseMessage = "FAILURE";
+			}
+			return Mono.just(cbsResponse);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("error processing cash withdraw request at CBS.{}", e.getMessage());
+		}
+		return null;
+	
 	}
 
 	@Override
@@ -357,65 +399,65 @@ public class CSBClient implements IssuerCbsClient {
 	            details.Txn_Timestamp = sdf.format(reqPay.getTxn().getTs());
 	            details.Txn_ID = reqPay.getTxn().getCustRef();
 	            final StringWriter writer = new StringWriter();
-	            CSBClient.CONTEXT.createMarshaller().marshal((Object)details, (Writer)writer);
+	            CSBCbsClient.CONTEXT.createMarshaller().marshal((Object)details, (Writer)writer);
 	            final IService1 iService1 = service1.getBasicHttpBindingIService1();
 	            final String responseString = iService1.aepsAadhaarTransaction(writer.toString());
-	            CSBClient.logger.info("@@@@ Response String :: {}", (Object)responseString);
-	            final Details response = (Details)CSBClient.CONTEXT.createUnmarshaller().unmarshal((InputStream)new ByteArrayInputStream(responseString.getBytes()));
-	            CSBClient.logger.info("@@@@ Response :: {}", (Object)response);
+	            CSBCbsClient.logger.info("@@@@ Response String :: {}", (Object)responseString);
+	            final Details response = (Details)CSBCbsClient.CONTEXT.createUnmarshaller().unmarshal((InputStream)new ByteArrayInputStream(responseString.getBytes()));
+	            CSBCbsClient.logger.info("@@@@ Response :: {}", (Object)response);
 	            final CBSResponse cbsResponse = new CBSResponse();
 	            cbsResponse.authCode = response.Auth_ID;
 	            cbsResponse.customerName = response.Customer_Name;
 	            cbsResponse.responseMessage = "SUCCESS";
-	            CSBClient.logger.info("@@@@@ Error_Code :: {}", (Object)response.Error_Code);
+	            CSBCbsClient.logger.info("@@@@@ Error_Code :: {}", (Object)response.Error_Code);
 	            if ("ERR000".equals(response.Error_Code)) {
 	                cbsResponse.responseCode = response.Error_Code.substring(3);
-	                CSBClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
-	                CSBClient.logger.info("@@@@@ before conversion Balance AMT :: {}", (Object)response.Response_XML.Bal.Amt);
+	                CSBCbsClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
+	                CSBCbsClient.logger.info("@@@@@ before conversion Balance AMT :: {}", (Object)response.Response_XML.Bal.Amt);
 	                final BigDecimal bal = response.Response_XML.Bal.Amt;
 	                final String amount = Generator.amountToFormattedString12(bal.toBigInteger());
 	                if (amount != null) {
 	                    cbsResponse.balance = "0001356" + ((Integer.parseInt(amount) < 0) ? "D" : "C") + amount;
-	                    CSBClient.logger.info("@@@@@ after conversion Balance AMT :: {}", (Object)cbsResponse.balance);
+	                    CSBCbsClient.logger.info("@@@@@ after conversion Balance AMT :: {}", (Object)cbsResponse.balance);
 	                }
 	            }
 	            else if ("ERR021".equals(response.Error_Code)) {
 	                cbsResponse.responseCode = "52";
-	                CSBClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
-	                CSBClient.logger.info("@@@@@ before conversion Balance AMT :: {}", (Object)response.Response_XML.Bal.Amt);
+	                CSBCbsClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
+	                CSBCbsClient.logger.info("@@@@@ before conversion Balance AMT :: {}", (Object)response.Response_XML.Bal.Amt);
 	                final BigDecimal bal = response.Response_XML.Bal.Amt;
 	                final String amount = Generator.amountToFormattedString12(bal.toBigInteger());
 	                if (amount != null) {
 	                    cbsResponse.balance = "0001356" + ((Integer.parseInt(amount) < 0) ? "D" : "C") + amount;
-	                    CSBClient.logger.info("@@@@@ after conversion Balance AMT :: {}", (Object)cbsResponse.balance);
+	                    CSBCbsClient.logger.info("@@@@@ after conversion Balance AMT :: {}", (Object)cbsResponse.balance);
 	                }
 	            }
 	            else if ("ERR053".equals(response.Error_Code)) {
 	                cbsResponse.responseCode = "51";
-	                CSBClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
-	                CSBClient.logger.info("@@@@@ before conversion Balance AMT :: {}", (Object)response.Response_XML.Bal.Amt);
+	                CSBCbsClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
+	                CSBCbsClient.logger.info("@@@@@ before conversion Balance AMT :: {}", (Object)response.Response_XML.Bal.Amt);
 	                final BigDecimal bal = response.Response_XML.Bal.Amt;
 	                final String amount = Generator.amountToFormattedString12(bal.toBigInteger());
 	                if (amount != null) {
 	                    cbsResponse.balance = "0001356" + ((Integer.parseInt(amount) < 0) ? "D" : "C") + amount;
-	                    CSBClient.logger.info("@@@@@ after conversion Balance AMT :: {}", (Object)cbsResponse.balance);
+	                    CSBCbsClient.logger.info("@@@@@ after conversion Balance AMT :: {}", (Object)cbsResponse.balance);
 	                }
 	            }
 	            else if ("ERR050".equals(response.Error_Code)) {
 	                cbsResponse.responseCode = "91";
-	                CSBClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
+	                CSBCbsClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
 	            }
 	            else if ("ERR064".equals(response.Error_Code)) {
 	                cbsResponse.responseCode = "UW";
-	                CSBClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
+	                CSBCbsClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
 	            }
 	            else {
 	                cbsResponse.responseMessage = "FAILURE";
 	            }
-	            return (Mono<CBSResponse>)Mono.just(cbsResponse);
+	            return Mono.just(cbsResponse);
 	        }
 	        catch (Exception e) {
-	            CSBClient.logger.error("error processing cash withdrawal accounting at CBS.", (Throwable)e);
+	            CSBCbsClient.logger.error("error processing cash withdrawal accounting at CBS.", (Throwable)e);
 	            return Mono.empty();
 	        }
 	}
@@ -441,65 +483,65 @@ public class CSBClient implements IssuerCbsClient {
             details.Txn_Timestamp = sdf.format(transaction.getTxnTs());
             details.Txn_ID = transaction.getCustRef();
             final StringWriter writer = new StringWriter();
-            CSBClient.CONTEXT.createMarshaller().marshal((Object)details, (Writer)writer);
+            CSBCbsClient.CONTEXT.createMarshaller().marshal((Object)details, (Writer)writer);
             final IService1 iService1 = service1.getBasicHttpBindingIService1();
             final String responseString = iService1.aepsAadhaarTransaction(writer.toString());
-            CSBClient.logger.info("@@@@ Response String :: {}", (Object)responseString);
-            final Details response = (Details)CSBClient.CONTEXT.createUnmarshaller().unmarshal((InputStream)new ByteArrayInputStream(responseString.getBytes()));
-            CSBClient.logger.info("@@@@ Response :: {}", (Object)response);
+            CSBCbsClient.logger.info("@@@@ Response String :: {}", (Object)responseString);
+            final Details response = (Details)CSBCbsClient.CONTEXT.createUnmarshaller().unmarshal((InputStream)new ByteArrayInputStream(responseString.getBytes()));
+            CSBCbsClient.logger.info("@@@@ Response :: {}", (Object)response);
             final CBSResponse cbsResponse = new CBSResponse();
             cbsResponse.authCode = response.Auth_ID;
             cbsResponse.customerName = response.Customer_Name;
             cbsResponse.responseMessage = "SUCCESS";
-            CSBClient.logger.info("@@@@@ Error_Code :: {}", (Object)response.Error_Code);
+            CSBCbsClient.logger.info("@@@@@ Error_Code :: {}", (Object)response.Error_Code);
             if ("ERR000".equals(response.Error_Code)) {
                 cbsResponse.responseCode = response.Error_Code.substring(3);
-                CSBClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
-                CSBClient.logger.info("@@@@@ before conversion Balance AMT :: {}", (Object)response.Response_XML.Bal.Amt);
+                CSBCbsClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
+                CSBCbsClient.logger.info("@@@@@ before conversion Balance AMT :: {}", (Object)response.Response_XML.Bal.Amt);
                 final BigDecimal bal = response.Response_XML.Bal.Amt;
                 final String amount = Generator.amountToFormattedString12(bal.toBigInteger());
                 if (amount != null) {
                     cbsResponse.balance = "0001356" + ((Integer.parseInt(amount) < 0) ? "D" : "C") + amount;
-                    CSBClient.logger.info("@@@@@ after conversion Balance AMT :: {}", (Object)cbsResponse.balance);
+                    CSBCbsClient.logger.info("@@@@@ after conversion Balance AMT :: {}", (Object)cbsResponse.balance);
                 }
             }
             else if ("ERR021".equals(response.Error_Code)) {
                 cbsResponse.responseCode = "52";
-                CSBClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
-                CSBClient.logger.info("@@@@@ before conversion Balance AMT :: {}", (Object)response.Response_XML.Bal.Amt);
+                CSBCbsClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
+                CSBCbsClient.logger.info("@@@@@ before conversion Balance AMT :: {}", (Object)response.Response_XML.Bal.Amt);
                 final BigDecimal bal = response.Response_XML.Bal.Amt;
                 final String amount = Generator.amountToFormattedString12(bal.toBigInteger());
                 if (amount != null) {
                     cbsResponse.balance = "0001356" + ((Integer.parseInt(amount) < 0) ? "D" : "C") + amount;
-                    CSBClient.logger.info("@@@@@ after conversion Balance AMT :: {}", (Object)cbsResponse.balance);
+                    CSBCbsClient.logger.info("@@@@@ after conversion Balance AMT :: {}", (Object)cbsResponse.balance);
                 }
             }
             else if ("ERR053".equals(response.Error_Code)) {
                 cbsResponse.responseCode = "51";
-                CSBClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
-                CSBClient.logger.info("@@@@@ before conversion Balance AMT :: {}", (Object)response.Response_XML.Bal.Amt);
+                CSBCbsClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
+                CSBCbsClient.logger.info("@@@@@ before conversion Balance AMT :: {}", (Object)response.Response_XML.Bal.Amt);
                 final BigDecimal bal = response.Response_XML.Bal.Amt;
                 final String amount = Generator.amountToFormattedString12(bal.toBigInteger());
                 if (amount != null) {
                     cbsResponse.balance = "0001356" + ((Integer.parseInt(amount) < 0) ? "D" : "C") + amount;
-                    CSBClient.logger.info("@@@@@ after conversion Balance AMT :: {}", (Object)cbsResponse.balance);
+                    CSBCbsClient.logger.info("@@@@@ after conversion Balance AMT :: {}", (Object)cbsResponse.balance);
                 }
             }
             else if ("ERR050".equals(response.Error_Code)) {
                 cbsResponse.responseCode = "91";
-                CSBClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
+                CSBCbsClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
             }
             else if ("ERR064".equals(response.Error_Code)) {
                 cbsResponse.responseCode = "UW";
-                CSBClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
+                CSBCbsClient.logger.info("@@@@@ response code :: {}", (Object)cbsResponse.responseCode);
             }
             else {
                 cbsResponse.responseMessage = "FAILURE";
             }
-            return (Mono<CBSResponse>)Mono.just(cbsResponse);
+            return Mono.just(cbsResponse);
         }
         catch (Exception e) {
-            CSBClient.logger.error("error processing cash withdrawal accounting at CBS.", (Throwable)e);
+            CSBCbsClient.logger.error("error processing cash withdrawal accounting at CBS.", (Throwable)e);
             return Mono.empty();
         }
     }
