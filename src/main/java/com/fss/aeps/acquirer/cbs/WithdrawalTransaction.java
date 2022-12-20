@@ -20,6 +20,7 @@ import com.fss.aeps.acquirer.merchant.MerchantRequest;
 import com.fss.aeps.acquirer.merchant.MerchantResponse;
 import com.fss.aeps.cbsclient.AcquirerCbsClient;
 import com.fss.aeps.cbsclient.CBSResponse;
+import com.fss.aeps.cbsclient.CSBClient;
 import com.fss.aeps.constants.ContextKey;
 import com.fss.aeps.constants.Purpose;
 import com.fss.aeps.jaxb.AccountDetailType;
@@ -73,7 +74,7 @@ public class WithdrawalTransaction {
 	private AppConfig appConfig;
 	
 	@Autowired
-	private AcquirerCbsClient cbsClient;
+	private CSBClient cbsClient;
 	
 	@Autowired
 	@Qualifier(value = "threadpool")

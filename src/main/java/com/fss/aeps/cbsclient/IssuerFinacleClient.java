@@ -24,6 +24,7 @@ import com.fss.aeps.jaxb.DeviceTagNameType;
 import com.fss.aeps.jaxb.ReqBalEnq;
 import com.fss.aeps.jaxb.ReqChkTxn;
 import com.fss.aeps.jaxb.ReqPay;
+import com.fss.aeps.jpa.acquirer.AcquirerTransaction;
 import com.fss.aeps.jpa.issuer.IssuerTransaction;
 import com.fss.aeps.jpa.issuer.IssuerTransactionPayee;
 import com.fss.aeps.util.AadharAccount;
@@ -574,6 +575,20 @@ public class IssuerFinacleClient implements IssuerCbsClient {
 		}
 		return null;
 
+	}
+
+
+	@Override
+	public Mono<CBSResponse> accountingReversal(AcquirerTransaction transaction) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Mono<CBSResponse> accountingCW(ReqPay request) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
