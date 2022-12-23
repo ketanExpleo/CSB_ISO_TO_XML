@@ -202,6 +202,10 @@ public class WithdrawalTransaction {
 
 			final RespPay response = appConfig.context.getBean(ReqPaySender.class).send(request); //, purchaseAccounting.andThen(purchaseReversal)
 			logger.info("[WithdrawalTransaction : process] Response String ::{}",response);
+			
+			//response.getResp().setResult(ResultType.FAILURE);
+			//response.getResp().setErrCode("91");
+			//response.context.put(ContextKey.IS_STATIC_RESPONSE, true);
 			if (response.getResp().getResult() == ResultType.SUCCESS) {
 				final CBSResponse accountingResponse = cbsClient.acqAccountingCW(request).block();
 				if(accountingResponse != null) {

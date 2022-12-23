@@ -337,12 +337,12 @@ public class CSBCbsClient implements CbsClient {
 			// cbsResponse.responseCode = response.Error_Code.substring(3);
 			logger.info("@@@@@ Error_Code :: {}", response.Error_Code);
 			// logger.info("@@@@@ response code :: {}",cbsResponse.responseCode);
-			response.Error_Code = "ERR000";
+			//response.Error_Code = "ERR000";
 			if ("ERR000".equals(response.Error_Code)) {
 				//cbsResponse.responseCode = "57";
 				cbsResponse.responseCode = "000";
 				logger.info("@@@@@ response code :: {}", cbsResponse.responseCode);
-				if (response.Response_XML.Bal.Amt != null) {
+				if (response.Response_XML.Bal != null && response.Response_XML.Bal.Amt != null) {
 					logger.info("@@@@@ before conversion Balance AMT :: {}", response.Response_XML.Bal.Amt);
 					BigDecimal bal = response.Response_XML.Bal.Amt;
 					String amount = Generator.amountToFormattedString12(bal.toBigInteger());
