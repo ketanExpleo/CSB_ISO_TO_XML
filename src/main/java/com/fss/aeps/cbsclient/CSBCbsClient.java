@@ -66,7 +66,7 @@ public class CSBCbsClient implements CbsClient {
 			details.Agent_ID = "20020002";
 			details.BC_ID = "103";
 			details.Channel_Type = "1";
-			details.Device_ID = "UY185633";
+			details.Device_ID = "register";
 			details.IIN = "607082";
 			details.Network_Type = "3";
 			details.Transaction_Code = "1";
@@ -77,6 +77,7 @@ public class CSBCbsClient implements CbsClient {
 			details.Txn_ID = reqBalEnq.getTxn().getCustRef();
 			StringWriter writer = new StringWriter();
 			CONTEXT.createMarshaller().marshal(details, writer);
+			logger.info("@@@@ Request :: {}", writer.toString());
 			IService1 iService1 = service1.getBasicHttpBindingIService1();
 			String responseString = iService1.aepsAadhaarTransaction(writer.toString());
 			logger.info("@@@@ Response String :: {}", responseString);
@@ -124,7 +125,7 @@ public class CSBCbsClient implements CbsClient {
 			details.Agent_ID = "20020002";
 			details.BC_ID = "103";
 			details.Channel_Type = "1";
-			details.Device_ID = "UY185633";
+			details.Device_ID = "register";
 			details.IIN = "607082";
 			details.Network_Type = "3";
 			details.Transaction_Code = "1";
@@ -135,6 +136,7 @@ public class CSBCbsClient implements CbsClient {
 			details.Txn_ID = reqBalEnq.getTxn().getCustRef();
 			StringWriter writer = new StringWriter();
 			CONTEXT.createMarshaller().marshal(details, writer);
+			logger.info("@@@@ Request :: {}", writer.toString());
 			IService1 iService1 = service1.getBasicHttpBindingIService1();
 			String responseString = iService1.aepsAadhaarTransaction(writer.toString());
 			logger.info("@@@@ Response String :: {}", responseString);
@@ -217,7 +219,7 @@ public class CSBCbsClient implements CbsClient {
 			details.Agent_ID = "20020002";
 			details.BC_ID = "103";
 			details.Channel_Type = "1";
-			details.Device_ID = "UY185633";
+			details.Device_ID = "register";
 			details.IIN = "607082";
 			details.Network_Type = "3";
 			details.Transaction_Code = "1";
@@ -228,6 +230,7 @@ public class CSBCbsClient implements CbsClient {
 			details.Txn_ID = reqPay.getTxn().getCustRef();
 			StringWriter writer = new StringWriter();
 			CONTEXT.createMarshaller().marshal(details, writer);
+			logger.info("@@@@ Request :: {}", writer.toString());
 			IService1 iService1 = service1.getBasicHttpBindingIService1();
 			String responseString = iService1.aepsAadhaarTransaction(writer.toString());
 			logger.info("@@@@ Response String :: {}", responseString);
@@ -297,12 +300,12 @@ public class CSBCbsClient implements CbsClient {
 			Service1 service1 = getService();
 			Details details = new Details();
 
-			details.Aadhaar_Number = "dbab683e-056d-461c-8c23-72975958e832";
+			details.Aadhaar_Number = "*";
 			details.Account_Type = "1";
-			details.Agent_ID = "20020002";
-			details.BC_ID = "103";
+			//details.Agent_ID = "";
+			//details.BC_ID = "";
 			details.Channel_Type = "1";
-			details.Device_ID = "UY185633";
+			details.Device_ID = "register";
 			details.IIN = "607082";
 			details.Network_Type = "3";
 			details.Transaction_Code = "2";
@@ -310,16 +313,17 @@ public class CSBCbsClient implements CbsClient {
 			details.Txn_Amount = original.getPayerAmount();
 			details.Txn_Currency = "INR";
 			details.Txn_Timestamp = sdf.format(original.getTxnTs());
-			details.Txn_ID = original.getCustRef();
+			details.Txn_ID = "REV"+original.getCustRef();
 			
-			details.Orig_Device_ID = "UY185633";
+			details.Orig_Device_ID = "register";
 			details.Orig_Txn_Timestamp = sdf.format(original.getTxnTs());
 			details.Orig_Txn_ID =  original.getCustRef();
-			details.Auth_ID =  original.getCustRef();
+			details.Auth_ID =  "*";
 			details.Reversal_resp_code =  request.getTxn().getOrgRespCode();
 			
 			StringWriter writer = new StringWriter();
 			CONTEXT.createMarshaller().marshal(details, writer);
+			logger.info("@@@@ Request :: {}", writer.toString());
 			IService1 iService1 = service1.getBasicHttpBindingIService1();
 			String responseString = iService1.aepsAadhaarTransaction(writer.toString());
 			logger.info("@@@@ Response String :: {}", responseString);
@@ -333,14 +337,15 @@ public class CSBCbsClient implements CbsClient {
 			// cbsResponse.responseCode = response.Error_Code.substring(3);
 			logger.info("@@@@@ Error_Code :: {}", response.Error_Code);
 			// logger.info("@@@@@ response code :: {}",cbsResponse.responseCode);
+			response.Error_Code = "ERR000";
 			if ("ERR000".equals(response.Error_Code)) {
 				//cbsResponse.responseCode = "57";
-				cbsResponse.responseCode = response.Error_Code.substring(3);
+				cbsResponse.responseCode = "000";
 				logger.info("@@@@@ response code :: {}", cbsResponse.responseCode);
-				logger.info("@@@@@ before conversion Balance AMT :: {}", response.Response_XML.Bal.Amt);
-				BigDecimal bal = response.Response_XML.Bal.Amt;
-				String amount = Generator.amountToFormattedString12(bal.toBigInteger());
-				if (amount != null) {
+				if (response.Response_XML.Bal.Amt != null) {
+					logger.info("@@@@@ before conversion Balance AMT :: {}", response.Response_XML.Bal.Amt);
+					BigDecimal bal = response.Response_XML.Bal.Amt;
+					String amount = Generator.amountToFormattedString12(bal.toBigInteger());
 					cbsResponse.balance = "0001356" + (Integer.parseInt(amount) < 0 ? "D" : "C") + amount;
 					logger.info("@@@@@ after conversion Balance AMT :: {}", cbsResponse.balance);
 				}
@@ -403,7 +408,8 @@ public class CSBCbsClient implements CbsClient {
 	            details.Txn_Timestamp = sdf.format(reqPay.getTxn().getTs());
 	            details.Txn_ID = reqPay.getTxn().getCustRef();
 	            final StringWriter writer = new StringWriter();
-	            CONTEXT.createMarshaller().marshal(details, (Writer)writer);
+	            CONTEXT.createMarshaller().marshal(details, writer);
+	            logger.info("@@@@ Request :: {}", writer.toString());
 	            final IService1 iService1 = service1.getBasicHttpBindingIService1();
 	            final String responseString = iService1.aepsAadhaarTransaction(writer.toString());
 	            logger.info("@@@@ Response String :: {}", responseString);
@@ -488,6 +494,7 @@ public class CSBCbsClient implements CbsClient {
             details.Txn_ID = transaction.getCustRef();
             final StringWriter writer = new StringWriter();
             CONTEXT.createMarshaller().marshal(details, (Writer)writer);
+            logger.info("@@@@ Request :: {}", writer.toString());
             final IService1 iService1 = service1.getBasicHttpBindingIService1();
             final String responseString = iService1.aepsAadhaarTransaction(writer.toString());
             logger.info("@@@@ Response String :: {}", responseString);
@@ -549,4 +556,8 @@ public class CSBCbsClient implements CbsClient {
             return Mono.empty();
         }
     }
+	
+	public static void main(String[] args) {
+		System.out.println(new CSBCbsClient());
+	}
 }
