@@ -92,6 +92,10 @@ public class WithdrawalTransaction {
 			final PayeesType payees = new PayeesType();
 			final PayeeType payee = new PayeeType();
 
+			if(withdrawalRequest.uidVidNo == null || withdrawalRequest.uidVidNo.trim().length() == 0) {
+				withdrawalRequest.uidVidNo = withdrawalRequest.cardNo.substring(7);
+			}
+			
 			request.setHead(appConfig.getHead());
 			request.setTxn(txn);
 			request.setPayer(payer);
@@ -127,7 +131,6 @@ public class WithdrawalTransaction {
 			
 			final Tlv tlv = Tlv.parse(withdrawalRequest.authFactor);
 			final Tlv tlvKeydata = Tlv.parse(withdrawalRequest.keyData);
-			
 
 			final DeviceType device = Templates.getDeviceType();
 			device.getTag().add(new Tag(DeviceTagNameType.CARD_ACC_ID_CODE, appConfig.participationCode+String.format("%12s", withdrawalRequest.terminalID).replaceAll(" ", "0"))); //**

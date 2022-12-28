@@ -38,9 +38,11 @@ public class ApplicationInitializer implements ApplicationContextInitializer<Con
 	public void initialize(ConfigurableApplicationContext applicationContext) {
 		try {
 			logger.info("ApplicationInitializer initiated.");
+			final String profile = System.getProperty("spring.profiles.active");
+			final String props = profile == null ? "/application.properties" : "/application-"+profile+".properties";
 			final ConfigurableEnvironment environment = applicationContext.getEnvironment();
 			final MutablePropertySources propertySources = environment.getPropertySources();
-			final Resource resource = new ClassPathResource("/application.properties");
+			final Resource resource = new ClassPathResource(props);
 			final Properties properties = PropertiesLoaderUtils.loadProperties(resource);
 			final DataSource dataSource = getDataSource(properties);
 			propertySources.addFirst(getPropertySource(dataSource));
