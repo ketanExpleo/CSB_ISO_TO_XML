@@ -45,7 +45,6 @@ public class CSBService {
 			
 			response.sid="FSS111";
 			response.type=1;
-			logger.info(transactionRequest.requestData);
 			Object object = context.createUnmarshaller().unmarshal(new ByteArrayInputStream(Base64.getDecoder().decode(transactionRequest.requestData)));
 			logger.info("@@@@ object :: {}", object.toString());
 			if(object instanceof WithdrawalRequest withdrawalRequest) {
