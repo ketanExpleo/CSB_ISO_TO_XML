@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,21 +26,40 @@ import com.fss.aeps.jaxb.ReqPay;
 import com.fss.aeps.jpa.acquirer.AcquirerTransaction;
 import com.fss.aeps.jpa.issuer.IssuerTransaction;
 import com.fss.aeps.util.Generator;
+import com.fss.aeps.util.UIDAIAuthCode;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
+import jakarta.xml.ws.BindingProvider;
 import reactor.core.publisher.Mono;
 
 @Component
 public class CSBCbsClient implements CbsClient {
 
+	static {
+		System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
+		System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
+		System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
+		System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");
+		System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dumpTreshold", "999999");
+	}
+	
 	private static final Logger logger = LoggerFactory.getLogger(CSBCbsClient.class);
 
 	private static final JAXBContext CONTEXT = getJaxbContext();
 
-	private Service1 getService() {
+	private IService1 getService() {
 		try {
-			return new Service1(new ClassPathResource("ini/csb.wsdl").getURL());
+			final Service1     service  = new Service1(new ClassPathResource("ini/csb.wsdl").getURL());
+			final IService1 serviceSoap = service.getBasicHttpBindingIService1();
+			final BindingProvider bindingProvider = (BindingProvider)serviceSoap;
+			//final Binding binding = bindingProvider.getBinding();
+			final Map<String, Object> requestContext = bindingProvider.getRequestContext();
+			requestContext.put("com.sun.xml.ws.request.timeout", 10000); // Timeout in millis
+			requestContext.put("com.sun.xml.ws.connect.timeout", 100000); // Timeout in millis
+			//binding.setHandlerChain(List.of(new LoggingHandler()));
+			return serviceSoap;
+			//return new Service1(new ClassPathResource("ini/csb.wsdl").getURL());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -59,9 +79,9 @@ public class CSBCbsClient implements CbsClient {
 	public Mono<CBSResponse> issuerBE(ReqBalEnq reqBalEnq) {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			Service1 service1 = getService();
+			IService1 service = getService();
 			Details details = new Details();
-			String uidToken = reqBalEnq.getPayer().getCreds().getCred().get(0).getData().getValue();
+			String uidToken = new UIDAIAuthCode(reqBalEnq.getPayer().getCreds().getCred().get(0).getData().getValue()).authToken;
 			String cardAccId = reqBalEnq.getPayer().getDevice().getTag().stream()
 					.filter(d -> d.getName() == DeviceTagNameType.AGENT_ID).findFirst().get().getValue();
 			//details.Aadhaar_Number = "dbab683e-056d-461c-8c23-72975958e832";
@@ -83,8 +103,7 @@ public class CSBCbsClient implements CbsClient {
 			StringWriter writer = new StringWriter();
 			CONTEXT.createMarshaller().marshal(details, writer);
 			logger.info("@@@@ Request :: {}", writer.toString());
-			IService1 iService1 = service1.getBasicHttpBindingIService1();
-			String responseString = iService1.aepsAadhaarTransaction(writer.toString());
+			String responseString = service.aepsAadhaarTransaction(writer.toString());
 			logger.info("@@@@ Response String :: {}", responseString);
 			Details response = (Details) CONTEXT.createUnmarshaller()
 					.unmarshal(new ByteArrayInputStream(responseString.getBytes()));
@@ -122,12 +141,14 @@ public class CSBCbsClient implements CbsClient {
 	public Mono<CBSResponse> issuerMS(ReqBalEnq reqBalEnq) {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			Service1 service1 = getService();
+			IService1 service = getService();
 			Details details = new Details();
-
-			details.Aadhaar_Number = "dbab683e-056d-461c-8c23-72975958e832";
+			String uidToken = reqBalEnq.getPayer().getCreds().getCred().get(0).getData().getValue();
+			String cardAccId = reqBalEnq.getPayer().getDevice().getTag().stream()
+					.filter(d -> d.getName() == DeviceTagNameType.AGENT_ID).findFirst().get().getValue();
+			details.Aadhaar_Number = getBenRefId(uidToken);
 			details.Account_Type = "1";
-			details.Agent_ID = "20020002";
+			details.Agent_ID = cardAccId;
 			details.BC_ID = "103";
 			details.Channel_Type = "1";
 			details.Device_ID = "register";
@@ -142,8 +163,7 @@ public class CSBCbsClient implements CbsClient {
 			StringWriter writer = new StringWriter();
 			CONTEXT.createMarshaller().marshal(details, writer);
 			logger.info("@@@@ Request :: {}", writer.toString());
-			IService1 iService1 = service1.getBasicHttpBindingIService1();
-			String responseString = iService1.aepsAadhaarTransaction(writer.toString());
+			String responseString = service.aepsAadhaarTransaction(writer.toString());
 			logger.info("@@@@ Response String :: {}", responseString);
 			Details response = (Details) CONTEXT.createUnmarshaller()
 					.unmarshal(new ByteArrayInputStream(responseString.getBytes()));
@@ -216,12 +236,15 @@ public class CSBCbsClient implements CbsClient {
 	public Mono<CBSResponse> issuerDebit(ReqPay reqPay) {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			Service1 service1 = getService();
+			IService1 service = getService();
 			Details details = new Details();
 
-			details.Aadhaar_Number = "dbab683e-056d-461c-8c23-72975958e832";
+			String uidToken = reqPay.getPayer().getCreds().getCred().get(0).getData().getValue();
+			String cardAccId = reqPay.getPayer().getDevice().getTag().stream()
+					.filter(d -> d.getName() == DeviceTagNameType.AGENT_ID).findFirst().get().getValue();
+			details.Aadhaar_Number = getBenRefId(uidToken);
 			details.Account_Type = "1";
-			details.Agent_ID = "20020002";
+			details.Agent_ID = cardAccId;
 			details.BC_ID = "103";
 			details.Channel_Type = "1";
 			details.Device_ID = "register";
@@ -236,8 +259,7 @@ public class CSBCbsClient implements CbsClient {
 			StringWriter writer = new StringWriter();
 			CONTEXT.createMarshaller().marshal(details, writer);
 			logger.info("@@@@ Request :: {}", writer.toString());
-			IService1 iService1 = service1.getBasicHttpBindingIService1();
-			String responseString = iService1.aepsAadhaarTransaction(writer.toString());
+			String responseString = service.aepsAadhaarTransaction(writer.toString());
 			logger.info("@@@@ Response String :: {}", responseString);
 			Details response = (Details) CONTEXT.createUnmarshaller()
 					.unmarshal(new ByteArrayInputStream(responseString.getBytes()));
@@ -300,7 +322,7 @@ public class CSBCbsClient implements CbsClient {
 	public Mono<CBSResponse> issuerDebitReversal(ReqPay request, IssuerTransaction original) {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			Service1 service1 = getService();
+			IService1 service = getService();
 			Details details = new Details();
 
 			details.Aadhaar_Number = "*";
@@ -327,8 +349,7 @@ public class CSBCbsClient implements CbsClient {
 			StringWriter writer = new StringWriter();
 			CONTEXT.createMarshaller().marshal(details, writer);
 			logger.info("@@@@ Request :: {}", writer.toString());
-			IService1 iService1 = service1.getBasicHttpBindingIService1();
-			String responseString = iService1.aepsAadhaarTransaction(writer.toString());
+			String responseString = service.aepsAadhaarTransaction(writer.toString());
 			logger.info("@@@@ Response String :: {}", responseString);
 			Details response = (Details) CONTEXT.createUnmarshaller()
 					.unmarshal(new ByteArrayInputStream(responseString.getBytes()));
@@ -393,7 +414,7 @@ public class CSBCbsClient implements CbsClient {
 	public Mono<CBSResponse> acqAccountingCW(final ReqPay reqPay) {
 		try {
 			final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			final Service1 service1 = getService();
+			final IService1 service = getService();
 			final Details details = new Details();
 			details.Aadhaar_Number = "dbab683e-056d-461c-8c23-72975958e832";
 			details.Account_Type = "1";
@@ -412,8 +433,7 @@ public class CSBCbsClient implements CbsClient {
 			final StringWriter writer = new StringWriter();
 			CONTEXT.createMarshaller().marshal(details, writer);
 			logger.info("@@@@ Request :: {}", writer.toString());
-			final IService1 iService1 = service1.getBasicHttpBindingIService1();
-			final String responseString = iService1.aepsAadhaarTransaction(writer.toString());
+			final String responseString = service.aepsAadhaarTransaction(writer.toString());
 			logger.info("@@@@ Response String :: {}", responseString);
 			final Details response = (Details) CONTEXT.createUnmarshaller()
 					.unmarshal((InputStream) new ByteArrayInputStream(responseString.getBytes()));
@@ -473,7 +493,7 @@ public class CSBCbsClient implements CbsClient {
 	public Mono<CBSResponse> acqAccountingCWReversal(final AcquirerTransaction transaction) {
 		try {
 			final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			final Service1 service1 = this.getService();
+			final IService1 service = getService();
 			final Details details = new Details();
 			details.Aadhaar_Number = "dbab683e-056d-461c-8c23-72975958e832";
 			details.Account_Type = "1";
@@ -492,8 +512,7 @@ public class CSBCbsClient implements CbsClient {
 			final StringWriter writer = new StringWriter();
 			CONTEXT.createMarshaller().marshal(details, (Writer) writer);
 			logger.info("@@@@ Request :: {}", writer.toString());
-			final IService1 iService1 = service1.getBasicHttpBindingIService1();
-			final String responseString = iService1.aepsAadhaarTransaction(writer.toString());
+			final String responseString = service.aepsAadhaarTransaction(writer.toString());
 			logger.info("@@@@ Response String :: {}", responseString);
 			final Details response = (Details) CONTEXT.createUnmarshaller()
 					.unmarshal((InputStream) new ByteArrayInputStream(responseString.getBytes()));
@@ -550,17 +569,20 @@ public class CSBCbsClient implements CbsClient {
 	}
 
 	public String getRefId(String uidToken) throws Exception {
-		Service1 service1 = getService();
-		IService1 iService1 = service1.getBasicHttpBindingIService1();
-		String refId = iService1.generateAadhaarRefID(uidToken, 4);
+		IService1 service = getService();
+		String refId = service.generateAadhaarRefID(uidToken, 4);
+		logger.info("uidai token refId : "+refId);
 		return refId;
 	}
 	
 	public String getBenRefId(String uidToken) throws Exception {
-		Service1 service1 = getService();
-		IService1 iService1 = service1.getBasicHttpBindingIService1();
-		String refId = iService1.generateAadhaarRefIDForAadhaaar(uidToken, 4);
+		IService1 service = getService();
+		String refId = service.generateAadhaarRefIDForAadhaaar(uidToken, 4);
+		logger.info("uidai token refId : "+refId);
 		return refId;
 	}
 
+	public static void main(String[] args) {
+		System.out.println(new CSBCbsClient().getService().aepsAadhaarTransaction("ACBD"));;
+	}
 }

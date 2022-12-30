@@ -35,6 +35,11 @@
 		<appender-ref ref="RollingFile" />
 		<appender-ref ref="Console" />
 	</logger>
+	
+	<logger name="com.sun.xml.ws" level="trace" additivity="false">
+		<appender-ref ref="RollingFile" />
+	</logger>
+	
 
 
 </configuration>

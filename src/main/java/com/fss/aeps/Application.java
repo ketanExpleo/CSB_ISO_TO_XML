@@ -9,6 +9,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 /**
  * @author Krishna Telgave
  * https://www.linkedin.com/in/krishnatelgave8983290664/
@@ -22,10 +24,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(considerNestedRepositories = true)
 public class Application {
 
-	private static final Logger logger = LoggerFactory.getLogger(Application.class);
-
 	@SuppressWarnings("unused")
 	private static final boolean init = init();
+	
+	private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
 	public static void main(String[] args) throws IOException {
 		try {
@@ -37,6 +39,7 @@ public class Application {
 	}
 
 	private static final boolean init() {
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
 		System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
 		System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
