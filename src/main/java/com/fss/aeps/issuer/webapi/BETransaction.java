@@ -70,7 +70,7 @@ public class BETransaction extends IIssuerTransaction<ReqBalEnq, RespBalEnq> {
 				balanceEnquiry.setCbsRespCode(cbsResponse.responseCode);
 				balanceEnquiry.setCbsAuthCode(cbsResponse.authCode);
 				balanceEnquiry.setCbsTranDetails(cbsResponse.tranDetails);
-				if(cbsResponse.responseCode.equals("000")) {
+				if(cbsResponse.responseCode.equals("00")) {
 					final Cred cred = request.getPayer().getCreds().getCred().get(0);
 					final UIDAIAuthCode uidaiAuthCode = new UIDAIAuthCode(cred.getData().getValue());
 					resp.setAuthCode(uidaiAuthCode.authCode);

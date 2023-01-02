@@ -73,7 +73,7 @@ public class MSTransaction extends IIssuerTransaction<ReqBalEnq, RespBalEnq> {
 				miniStatement.setCbsRespCode(cbsResponse.responseCode);
 				miniStatement.setCbsAuthCode(cbsResponse.authCode);
 				miniStatement.setCbsTranDetails(cbsResponse.tranDetails);
-				if(cbsResponse.responseCode.equals("000")) {
+				if(cbsResponse.responseCode.equals("00")) {
 					final Cred cred = request.getPayer().getCreds().getCred().get(0);
 					final UIDAIAuthCode uidaiAuthCode = new UIDAIAuthCode(cred.getData().getValue());
 					resp.setAuthCode(uidaiAuthCode.authCode);

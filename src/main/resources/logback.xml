@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener> 
+
 	<property name="LOGS" value="./logs" />
 	<conversionRule conversionWord="tid" converterClass="com.fss.aeps.util.ThreadIdLoggingConverter" />
 	<appender name="Console"
@@ -36,7 +41,11 @@
 		<appender-ref ref="Console" />
 	</logger>
 	
-	<logger name="com.sun.xml.ws" level="trace" additivity="false">
+	<logger name="com.sun.xml.ws.transport.http" level="trace" additivity="false">
+		<appender-ref ref="RollingFile" />
+	</logger>
+	
+	<logger name="com.sun.xml.internal.ws.transport.http" level="trace" additivity="false">
 		<appender-ref ref="RollingFile" />
 	</logger>
 	

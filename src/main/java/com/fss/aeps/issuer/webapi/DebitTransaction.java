@@ -88,7 +88,7 @@ public class DebitTransaction extends IIssuerTransaction<ReqPay, RespPay> {
 				transaction.setCbsResponseCode(cbsResponse.responseCode);
 				transaction.setCbsAuthCode(cbsResponse.authCode);
 				transaction.setCbsTranDetails(cbsResponse.tranDetails);
-				if(cbsResponse.responseCode.equals("000")) {
+				if(cbsResponse.responseCode.equals("00")) {
 					final Cred cred = request.getPayer().getCreds().getCred().get(0);
 					final UIDAIAuthCode uidaiAuthCode = new UIDAIAuthCode(cred.getData().getValue());
 					resp.setAuthCode(uidaiAuthCode.authCode);

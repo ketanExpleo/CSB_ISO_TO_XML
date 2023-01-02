@@ -37,7 +37,7 @@ public class CbsToNpciResponseCodes implements Serializable {
 	}
 
 	@Id
-	@Column(name = "CBS_CODE", unique = true, nullable = false, length = 3)
+	@Column(name = "CBS_CODE", unique = true, nullable = false, length = 10)
 	public String getCbsCode() {
 		return this.cbsCode;
 	}

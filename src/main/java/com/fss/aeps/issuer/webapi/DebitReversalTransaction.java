@@ -100,7 +100,7 @@ public class DebitReversalTransaction  extends IIssuerTransaction<ReqPay, RespPa
 					reversal.setCbsResponseCode(cbsResponse.responseCode);
 					reversal.setCbsAuthCode(cbsResponse.authCode);
 					reversal.setCbsTranDetails(cbsResponse.tranDetails);
-					if("000".equals(cbsResponse.responseCode) || "913".equals(cbsResponse.responseCode)) {
+					if("00".equals(cbsResponse.responseCode) || "913".equals(cbsResponse.responseCode)) {
 						resp.setResult(ResultType.SUCCESS);
 						ref.setBalAmt(cbsResponse.balance);
 						ref.setRespCode("00");
