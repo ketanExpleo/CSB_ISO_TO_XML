@@ -103,7 +103,7 @@ public class DebitTransaction extends IIssuerTransaction<ReqPay, RespPay> {
 					final UIDAIAuthCode uidaiAuthCode = new UIDAIAuthCode(cred.getData().getValue());
 					resp.setAuthCode(uidaiAuthCode.authCode);
 					resp.setResult(ResultType.FAILURE);
-					resp.setErrCode(cbsToNpciResponseMapper.map(cbsResponse.responseCode));
+					resp.setErrCode(cbsResponse.responseCode);
 					ref.setRespCode(resp.getErrCode());
 
 					//do negative processing here

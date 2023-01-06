@@ -59,6 +59,10 @@ public class BalanceEnquiryTransaction {
 	private Mapper npciResponseDescMapper;
 
 	public BalanceResponse process(BalanceRequest balanceRequest) {
+		
+		
+		if(balanceRequest.cardNo.charAt(7) == '0') balanceRequest.uidVidNo = balanceRequest.cardNo.substring(7);
+		
 		// final BalanceRequest body = new BalanceRequest();
 		// logger.info("body : " + body);
 		final ReqBalEnq reqBalEnq = new ReqBalEnq();
@@ -93,6 +97,9 @@ public class BalanceEnquiryTransaction {
 		info.setIdentity(identity);
 		info.setRating(rating);
 
+		
+		
+		
 		final Tlv tlv = Tlv.parse(balanceRequest.authFactor);
 		final Tlv tlvKeydata = Tlv.parse(balanceRequest.keyData);
 

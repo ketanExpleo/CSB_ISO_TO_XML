@@ -82,6 +82,9 @@ public class WithdrawalTransaction {
 	private Mapper npciResponseDescMapper;
 	
 	public WithdrawalResponse process(WithdrawalRequest withdrawalRequest) {
+		
+		if(withdrawalRequest.cardNo.charAt(7) == '0')  withdrawalRequest.uidVidNo = withdrawalRequest.cardNo.substring(7);
+		
 		logger.info("Inside [WithdrawalTransaction: process] "+withdrawalRequest.toString());
 		final AcquirerTransaction transaction = new AcquirerTransaction();
 		try {
@@ -221,7 +224,7 @@ public class WithdrawalTransaction {
 					logger.info("accounting response not received for txnId : " + request.getTxn().getId());
 				}
 
-				if(accountingResponse == null || "911".equalsIgnoreCase(accountingResponse.responseCode) || "91".equalsIgnoreCase(accountingResponse.responseCode)) {
+				if(accountingResponse == null || "91".equalsIgnoreCase(accountingResponse.responseCode)) {
 					cbsClient.acqAccountingCWReversal(transaction);
 					response.getResp().setResult(ResultType.FAILURE);
 					response.getResp().setErrCode("91");
