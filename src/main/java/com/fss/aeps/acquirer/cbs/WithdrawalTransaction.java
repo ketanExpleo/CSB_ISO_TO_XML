@@ -83,7 +83,7 @@ public class WithdrawalTransaction {
 	
 	public WithdrawalResponse process(WithdrawalRequest withdrawalRequest) {
 		
-		if(withdrawalRequest.cardNo.charAt(7) == '0')  withdrawalRequest.uidVidNo = withdrawalRequest.cardNo.substring(7);
+		if(withdrawalRequest.cardNo.charAt(6) == '0')  withdrawalRequest.uidVidNo = withdrawalRequest.cardNo.substring(7);
 		
 		logger.info("Inside [WithdrawalTransaction: process] "+withdrawalRequest.toString());
 		final AcquirerTransaction transaction = new AcquirerTransaction();

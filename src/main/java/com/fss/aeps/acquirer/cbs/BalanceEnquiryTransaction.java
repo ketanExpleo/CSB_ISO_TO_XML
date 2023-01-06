@@ -61,7 +61,7 @@ public class BalanceEnquiryTransaction {
 	public BalanceResponse process(BalanceRequest balanceRequest) {
 		
 		
-		if(balanceRequest.cardNo.charAt(7) == '0') balanceRequest.uidVidNo = balanceRequest.cardNo.substring(7);
+		if(balanceRequest.cardNo.charAt(6) == '0') balanceRequest.uidVidNo = balanceRequest.cardNo.substring(7);
 		
 		// final BalanceRequest body = new BalanceRequest();
 		// logger.info("body : " + body);

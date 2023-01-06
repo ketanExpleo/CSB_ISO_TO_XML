@@ -412,12 +412,6 @@ public class CSBCbsClient implements CbsClient {
 			if(cbsResponse.responseCode.length() > 2) cbsResponse.responseCode = "KH";
 			if ("ERR000".equals(response.Error_Code)) {
 				cbsResponse.responseMessage = "SUCCESS";
-				final BigDecimal bal = response.Response_XML.Bal.Amt;
-				final String amount = Generator.amountToFormattedString12(bal.toBigInteger());
-				if (amount != null) {
-					cbsResponse.balance = "0001356" + ((Integer.parseInt(amount) < 0) ? "D" : "C") + amount;
-					logger.info("after conversion Balance AMT :: {}", cbsResponse.balance);
-				}
 			} else {
 				cbsResponse.responseMessage = "FAILURE";
 			}

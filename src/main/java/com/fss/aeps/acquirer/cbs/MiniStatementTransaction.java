@@ -61,7 +61,7 @@ public class MiniStatementTransaction {
 
 	public MiniStatementResponse process(MiniStatementRequest miniStatementRequest) {
 		
-		if(miniStatementRequest.cardNo.charAt(7) == '0') miniStatementRequest.uidVidNo = miniStatementRequest.cardNo.substring(7);
+		if(miniStatementRequest.cardNo.charAt(6) == '0') miniStatementRequest.uidVidNo = miniStatementRequest.cardNo.substring(7);
 		
 		final ReqBalEnq reqBalEnq = new ReqBalEnq();
 		final PayTrans txn = new PayTrans();
