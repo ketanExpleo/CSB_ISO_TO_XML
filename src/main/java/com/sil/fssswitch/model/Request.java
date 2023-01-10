@@ -48,4 +48,5 @@ public class Request {
 	@XmlElement(name = "ORIGINAL_DATA") public String          originalData;
 	@XmlElement(name = "BENEFICIARY_DATA") public String       beneficiaryData;
 
+	
 }

@@ -23,7 +23,6 @@ import org.tempuri.IService1;
 import org.tempuri.Service1;
 
 import com.fss.aeps.AppConfig;
-import com.fss.aeps.http.filters.LoggingHandler;
 import com.fss.aeps.jaxb.AccountDetailType;
 import com.fss.aeps.jaxb.DeviceTagNameType;
 import com.fss.aeps.jaxb.ReqBalEnq;
@@ -37,7 +36,6 @@ import com.fss.aeps.util.UIDAIAuthCode;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
-import jakarta.xml.ws.Binding;
 import jakarta.xml.ws.BindingProvider;
 import reactor.core.publisher.Mono;
 
@@ -60,14 +58,14 @@ public class CSBCbsClient implements CbsClient {
 			final Service1     service  = new Service1(new ClassPathResource("ini/csb.wsdl").getURL());
 			final IService1 serviceSoap = service.getBasicHttpBindingIService1();
 			final BindingProvider bindingProvider = (BindingProvider)serviceSoap;
-			final Binding binding = bindingProvider.getBinding();
+			//final Binding binding = bindingProvider.getBinding();
 			final Map<String, Object> requestContext = bindingProvider.getRequestContext();
 			requestContext.put("com.sun.xml.ws.request.timeout", 10000); // Timeout in millis
 			requestContext.put("com.sun.xml.ws.connect.timeout", 100000); // Timeout in millis
-			binding.setHandlerChain(List.of(new LoggingHandler()));
+			//binding.setHandlerChain(List.of(new LoggingHandler()));
 			return serviceSoap;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("error creating CBS client.", e);
 		}
 		return null;
 	}
@@ -171,15 +169,9 @@ public class CSBCbsClient implements CbsClient {
 			if(cbsResponse.responseCode.length() > 2) cbsResponse.responseCode = "KH";
 			if ("ERR000".equals(response.Error_Code)) {
 				logger.info("before conversion Balance AMT :: {}", response.Response_XML.MiniStmt.Bal.Amt);
-				BigDecimal bal = response.Response_XML.MiniStmt.Bal.Amt;
-				String amount = Generator.amountToFormattedString12(bal.toBigInteger());
-				if (amount != null) {
-					cbsResponse.balance = "0001356" + (Integer.parseInt(amount) < 0 ? "D" : "C") + amount;
-					logger.info("after conversion Balance AMT :: {}", cbsResponse.balance);
-				}
-				List<Row> rowList = response.Response_XML.MiniStmt.row;
-				List<String> statementList = getStatementList(rowList);
-				cbsResponse.statement = statementList;
+				final List<Row> rowList = response.Response_XML.MiniStmt.row;
+				List<String> statementList = getStatementList(rowList, response.Response_XML.MiniStmt.Bal);
+				cbsResponse.statement.addAll(statementList);
 				cbsResponse.responseMessage = "SUCCESS";
 			} else {
 				cbsResponse.responseMessage = "FAILURE";
@@ -191,25 +183,24 @@ public class CSBCbsClient implements CbsClient {
 		return null;
 	}
 
-	private List<String> getStatementList(List<Row> rowList) {
+	private List<String> getStatementList(List<Row> rowList, Bal bal) {
 		SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM");
 		List<String> stmtList = new ArrayList<>();
-		for (Row row : rowList) {
-			String date = row.Dt;
-			Date newDate;
-			try {
-				newDate = new SimpleDateFormat("dd-MMM-yyyy").parse(date);
+		try {
+			for (Row row : rowList) {
+				String date = row.Dt;
+				Date newDate = new SimpleDateFormat("dd-MMM-yyyy").parse(date);
 				String finalDate = sdf1.format(newDate);
 				String narr = row.Narr.substring(0, 17);
 				String data = finalDate + " " + narr + " " + row.DrCr.charAt(0) + " " + row.Amt;
 				stmtList.add(data);
-				logger.info("statementList :: {}", stmtList);
-				return stmtList;
-			} catch (ParseException e) {
-				e.printStackTrace();
 			}
+			String balString = ("Cr".equalsIgnoreCase(bal.DrCr) ? "+" : "-")+  Double.toString(bal.Amt.doubleValue());
+			stmtList.add(balString);
+		} catch (ParseException e) {
+			logger.error("error processing mini statement request at CBS.", e);
 		}
-		return null;
+		return stmtList;
 	}
 
 	@Override
@@ -304,9 +295,8 @@ public class CSBCbsClient implements CbsClient {
 			final CBSResponse cbsResponse = new CBSResponse();
 			cbsResponse.authCode = response.Auth_ID;
 			cbsResponse.customerName = response.Customer_Name;
-			cbsResponse.responseCode = cbsToNpciResponseMapper.map(response.Error_Code);
-			if(cbsResponse.responseCode.length() > 2) cbsResponse.responseCode = "KH";
-			if ("ERR000".equals(response.Error_Code)) {
+			if ("ERR099".equals(response.Error_Code)) {
+				cbsResponse.responseCode = "00";
 				cbsResponse.responseMessage = "SUCCESS";
 				if (response.Response_XML.Bal != null && response.Response_XML.Bal.Amt != null) {
 					logger.info("before conversion Balance AMT :: {}", response.Response_XML.Bal.Amt);
@@ -316,6 +306,7 @@ public class CSBCbsClient implements CbsClient {
 					logger.info("after conversion Balance AMT :: {}", cbsResponse.balance);
 				}
 			}  else {
+				cbsResponse.responseCode = cbsToNpciResponseMapper.map(response.Error_Code);
 				cbsResponse.responseMessage = "FAILURE";
 			}
 			return Mono.just(cbsResponse);
@@ -363,12 +354,6 @@ public class CSBCbsClient implements CbsClient {
 			if(cbsResponse.responseCode.length() > 2) cbsResponse.responseCode = "KH";
 			if ("ERR000".equals(response.Error_Code)) {
 				cbsResponse.responseMessage = "SUCCESS";
-				final BigDecimal bal = response.Response_XML.Bal.Amt;
-				final String amount = Generator.amountToFormattedString12(bal.toBigInteger());
-				if (amount != null) {
-					cbsResponse.balance = "0001356" + ((Integer.parseInt(amount) < 0) ? "D" : "C") + amount;
-					logger.info("after conversion Balance AMT :: {}", cbsResponse.balance);
-				}
 			} else {
 				cbsResponse.responseMessage = "FAILURE";
 			}

@@ -125,8 +125,7 @@ public class IssuerRequestHandler {
 		else if(request.getTxn().getType() == PayConstant.REVERSAL && request.getTxn().getSubType() == TxnSubType.DEBIT) {
 			executor.execute(context.getBean(DebitReversalTransaction.class, request, new RespPay()));
 		}
-		else throw new RuntimeException("unknown transaction type : "+request.getTxn().getType()+
-				" subType : "+request.getTxn().getSubType());
+		else throw new RuntimeException("unknown transaction type : " + request.getTxn().getType() + " subType : "+request.getTxn().getSubType());
 		return ack;
 	}
 

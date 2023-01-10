@@ -39,7 +39,6 @@ public class WebServiceConfig extends WsConfigurerAdapter {
 	public SaajSoapMessageFactory messageFactory() {
 	    SaajSoapMessageFactory messageFactory = new SaajSoapMessageFactory();
 	    messageFactory.setSoapVersion(SoapVersion.SOAP_12);
-	    
 	    return messageFactory;
 	}
 }

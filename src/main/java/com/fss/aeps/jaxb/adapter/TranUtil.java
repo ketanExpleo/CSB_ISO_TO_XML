@@ -11,7 +11,7 @@ public class TranUtil {
 	private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
 	public static final String getTranKey(PayTrans txn) {
-		String tranKey = (txn.getType().name() + (txn.getSubType() == null ? "" : txn.getSubType().name()) + txn.getId());
+		String tranKey = (txn.getType().name()+ txn.getId());
 		logger.info("trankey :  "+tranKey);
 		return tranKey;
 	}

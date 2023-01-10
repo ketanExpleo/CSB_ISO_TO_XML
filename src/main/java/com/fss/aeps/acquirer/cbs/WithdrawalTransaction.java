@@ -231,7 +231,7 @@ public class WithdrawalTransaction {
 					request.context.put(ContextKey.ORG_RESP_CODE, "22");
 					executor.execute(appConfig.context.getBean(ReversalTransaction.class, request));
 				}
-				else if(!"000".equals(accountingResponse.responseCode)) {
+				else if(!"00".equals(accountingResponse.responseCode)) {
 					response.getResp().setResult(ResultType.FAILURE);
 					response.getResp().setErrCode("91");
 					request.context.put(ContextKey.ORG_RESP_CODE, "22");
