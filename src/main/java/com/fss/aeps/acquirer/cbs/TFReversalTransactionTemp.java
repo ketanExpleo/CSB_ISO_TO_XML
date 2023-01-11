@@ -5,13 +5,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.fss.aeps.AppConfig;
-import com.fss.aeps.acquirer.cbs.model.ReversalRequest;
-import com.fss.aeps.acquirer.cbs.model.ReversalResponse;
 import com.fss.aeps.acquirer.core.RevPaySender;
 import com.fss.aeps.cbsclient.CBSResponse;
 import com.fss.aeps.cbsclient.CSBCbsClient;
@@ -39,10 +39,9 @@ import com.fss.aeps.services.AcquirerTransactionService;
 import com.fss.aeps.util.DeviceTagMap;
 import com.fss.aeps.util.Generator;
 
-@RestController
-public class TFReversalTransaction {
+public class TFReversalTransactionTemp {
 
-	private static final Logger logger = LoggerFactory.getLogger(TFReversalTransaction.class);
+	private static final Logger logger = LoggerFactory.getLogger(TFReversalTransactionTemp.class);
 
 	@Autowired
 	private AppConfig appConfig;
@@ -54,16 +53,12 @@ public class TFReversalTransaction {
 	private AcquirerTransactionService transactionService;
 
 	@PostMapping(path = "/acquirer/TFReversal/{txnId}", produces = MediaType.APPLICATION_XML_VALUE)
-	public ReversalResponse reversal(ReversalRequest reversalRequest) {
-		ReversalResponse response = new ReversalResponse(reversalRequest);
-		response.responseCode = "91";
-		response.responseDesc = "Original Txn Not Found";
-		logger.info("initiating terminal failure reversal : "+reversalRequest);
-		final AcquirerTransaction acquirerTransaction = transactionService.findAcquirerTransactiontByTxnId(reversalRequest.rrn, reversalRequest.uidVidNo);
+	public ResponseEntity<Void> reversal(@PathVariable("txnId") String txnId) {
+		logger.info("initiating terminal failure reversal : "+txnId);
+		final AcquirerTransaction acquirerTransaction = transactionService.findAcquirerTransactiontByTxnId(txnId, "");
 		if(acquirerTransaction == null) {
-			logger.error("acquirer transaction is null for TxnID : "+reversalRequest.rrn+":"+reversalRequest.uidVidNo);
-			response.responseDesc = "Original Txn Not Found";
-			return response;
+			logger.error("acquirer transaction is null for TxnID : "+txnId);
+			return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).build();
 		}
 		final ReqPay reversal = new ReqPay();
 		final PayTrans txn = new PayTrans();
@@ -81,7 +76,7 @@ public class TFReversalTransaction {
 		payer.setInfo(info);
 		info.setIdentity(identityType);
 		info.setRating(rating);
-		payer.setDevice(device);
+		//payer.setDevice(device);
 		payer.setAc(account);
 		payer.setAmount(amount);
 		reversal.setPayees(payees);
@@ -140,11 +135,6 @@ public class TFReversalTransaction {
 		logger.info("terminal failure reversal request forwarded to npci : "+respPay.getTxn().getId());
 		final CBSResponse cbsResponse =  cbsClient.acqAccountingCWReversal(acquirerTransaction).block();
 		if(cbsResponse != null) logger.info("Terminal Failure Response fro TxnID : "+reversal.getTxn().getId()+" Response Code : "+cbsResponse.responseCode);
-		if(cbsResponse != null) {
-			response.responseCode = cbsResponse.responseCode;
-			response.respDesc = "REVERSAL SUCCESS";
-		}
-		
-		return response;
+		return ResponseEntity.ok().build();
 	}
 }

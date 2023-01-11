@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import com.fss.aeps.AppConfig;
 import com.fss.aeps.acquirer.AcquirerChannel;
+import com.fss.aeps.acquirer.cbs.model.MiniStatementRequest;
+import com.fss.aeps.acquirer.cbs.model.MiniStatementResponse;
 import com.fss.aeps.acquirer.core.ReqBalEnqSender;
 import com.fss.aeps.acquirer.core.Templates;
 import com.fss.aeps.constants.ContextKey;
@@ -44,8 +46,6 @@ import com.fss.aeps.jaxb.DeviceType.Tag;
 import com.fss.aeps.util.Generator;
 import com.fss.aeps.util.Mapper;
 import com.fss.aeps.util.Tlv;
-import com.sil.fssswitch.model.MiniStatementRequest;
-import com.sil.fssswitch.model.MiniStatementResponse;
 
 @Component
 public class MiniStatementTransaction {

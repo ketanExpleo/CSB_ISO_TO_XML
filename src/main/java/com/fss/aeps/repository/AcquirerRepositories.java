@@ -40,6 +40,8 @@ public class AcquirerRepositories {
 
 		public AcquirerTransaction findFirstByCustRefAndTxnType(String custRef, PayConstant txnType);
 
+		public AcquirerTransaction findFirstByCustRefAndPayerAcUidnumVid(String custRef, String uidVid);
+
 	}
 
 

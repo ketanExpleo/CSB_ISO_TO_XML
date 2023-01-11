@@ -12,15 +12,18 @@ import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import com.fss.aeps.AppConfig;
 import com.fss.aeps.acquirer.cbs.fixml.PidData;
-import com.sil.fssswitch.model.BalanceRequest;
-import com.sil.fssswitch.model.BalanceResponse;
-import com.sil.fssswitch.model.MResponse;
-import com.sil.fssswitch.model.MiniStatementRequest;
-import com.sil.fssswitch.model.MiniStatementResponse;
-import com.sil.fssswitch.model.Response;
-import com.sil.fssswitch.model.TSPResponse;
-import com.sil.fssswitch.model.WithdrawalRequest;
-import com.sil.fssswitch.model.WithdrawalResponse;
+import com.fss.aeps.acquirer.cbs.model.BalanceRequest;
+import com.fss.aeps.acquirer.cbs.model.BalanceResponse;
+import com.fss.aeps.acquirer.cbs.model.MResponse;
+import com.fss.aeps.acquirer.cbs.model.MiniStatementRequest;
+import com.fss.aeps.acquirer.cbs.model.MiniStatementResponse;
+import com.fss.aeps.acquirer.cbs.model.Response;
+import com.fss.aeps.acquirer.cbs.model.ReversalRequest;
+import com.fss.aeps.acquirer.cbs.model.ReversalResponse;
+import com.fss.aeps.acquirer.cbs.model.TSPResponse;
+import com.fss.aeps.acquirer.cbs.model.WithdrawalRequest;
+import com.fss.aeps.acquirer.cbs.model.WithdrawalResponse;
+
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 
@@ -61,12 +64,19 @@ public class CSBService {
 				StringWriter writer = new StringWriter();
 				context.createMarshaller().marshal(balanceResponse, writer);
 				response.data= Base64.getEncoder().encodeToString(writer.toString().getBytes());
-			}else if(object instanceof MiniStatementRequest miniStatementRequest) {
+			} else if(object instanceof MiniStatementRequest miniStatementRequest) {
 				logger.info("[CSBService : transactionRequest] Ministatement request ::{}",miniStatementRequest);
 				final MiniStatementResponse miniStatementResponse = appConfig.context.getBean(MiniStatementTransaction.class).process(miniStatementRequest);
 				logger.info("[CSBService : transactionRequest] Ministatement response ::{}",miniStatementResponse);
 				StringWriter writer = new StringWriter();
 				context.createMarshaller().marshal(miniStatementResponse, writer);
+				response.data= Base64.getEncoder().encodeToString(writer.toString().getBytes());
+			} else if(object instanceof ReversalRequest reversalRequest) {
+				logger.info("[CSBService : transactionRequest] ReversalRequest request ::{}",reversalRequest);
+				final ReversalResponse reversalResponse = appConfig.context.getBean(TFReversalTransaction.class).reversal(reversalRequest);
+				logger.info("[CSBService : transactionRequest] Ministatement response ::{}",reversalResponse);
+				StringWriter writer = new StringWriter();
+				context.createMarshaller().marshal(reversalResponse, writer);
 				response.data= Base64.getEncoder().encodeToString(writer.toString().getBytes());
 			}
 			
@@ -86,11 +96,22 @@ public class CSBService {
 	private static JAXBContext getContext() {
 		
 		try {
-			return JAXBContext.newInstance(WithdrawalRequest.class, WithdrawalResponse.class, BalanceRequest.class, BalanceResponse.class, MiniStatementRequest.class, MiniStatementResponse.class,MResponse.class, TransactionRequestResponse.class, TSPResponse.class, PidData.class,Response.class, BalanceEnquiryTransaction.class);
+			return JAXBContext.newInstance(
+					WithdrawalRequest.class, WithdrawalResponse.class, 
+					BalanceRequest.class, BalanceResponse.class, 
+					MiniStatementRequest.class, MiniStatementResponse.class,
+					MResponse.class, TransactionRequestResponse.class, 
+					TSPResponse.class, PidData.class,Response.class, 
+					BalanceEnquiryTransaction.class, 
+					ReversalRequest.class, ReversalResponse.class);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
+	
+	public static void main(String[] args) {
+		System.out.println(String.format("%-37s", "A").replaceAll(" ", "0"));
+	}
 }

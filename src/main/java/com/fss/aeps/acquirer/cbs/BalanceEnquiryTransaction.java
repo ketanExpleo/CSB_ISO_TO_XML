@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import com.fss.aeps.AppConfig;
 import com.fss.aeps.acquirer.AcquirerChannel;
+import com.fss.aeps.acquirer.cbs.model.BalanceRequest;
+import com.fss.aeps.acquirer.cbs.model.BalanceResponse;
 import com.fss.aeps.acquirer.core.ReqBalEnqSender;
 import com.fss.aeps.acquirer.core.Templates;
 import com.fss.aeps.constants.ContextKey;
@@ -43,8 +45,6 @@ import com.fss.aeps.jaxb.WhiteListedConstant;
 import com.fss.aeps.util.Generator;
 import com.fss.aeps.util.Mapper;
 import com.fss.aeps.util.Tlv;
-import com.sil.fssswitch.model.BalanceRequest;
-import com.sil.fssswitch.model.BalanceResponse;
 
 @Component
 public class BalanceEnquiryTransaction {

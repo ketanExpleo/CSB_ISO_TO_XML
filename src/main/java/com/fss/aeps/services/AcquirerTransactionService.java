@@ -21,7 +21,6 @@ import com.fss.aeps.jaxb.PayerType;
 import com.fss.aeps.jaxb.RefType;
 import com.fss.aeps.jaxb.ReqPay;
 import com.fss.aeps.jaxb.RespPay;
-import com.fss.aeps.jaxb.TxnSubType;
 import com.fss.aeps.jpa.acquirer.AcquirerTransaction;
 import com.fss.aeps.jpa.acquirer.AcquirerTransactionPayee;
 import com.fss.aeps.jpa.acquirer.AcquirerTransactionPayeeId;
@@ -206,8 +205,8 @@ public class AcquirerTransactionService {
 		return repository.findById(msgId).orElse(null);
 	}
 
-	public AcquirerTransaction findAcquirerTransactiontByTxnId(final String txnId) {
-		return repository.findFirstByTxnIdAndTxnTypeAndTxnSubType(txnId, PayConstant.PAY, TxnSubType.PAY);
+	public AcquirerTransaction findAcquirerTransactiontByTxnId(final String custRef, String uidVid) {
+		return repository.findFirstByCustRefAndPayerAcUidnumVid(custRef, uidVid);
 	}
 
 	public AcquirerTransaction updateAcquirerTransaction(AcquirerTransaction acquirerTransaction) {

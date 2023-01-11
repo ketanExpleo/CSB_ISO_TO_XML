@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.fss.aeps.AppConfig;
+import com.fss.aeps.acquirer.cbs.model.WithdrawalRequest;
+import com.fss.aeps.acquirer.cbs.model.WithdrawalResponse;
 import com.fss.aeps.acquirer.core.ReqPaySender;
 import com.fss.aeps.acquirer.core.Templates;
 import com.fss.aeps.cbsclient.CBSResponse;
@@ -56,8 +58,6 @@ import com.fss.aeps.util.ExceptionUtil;
 import com.fss.aeps.util.Generator;
 import com.fss.aeps.util.Mapper;
 import com.fss.aeps.util.Tlv;
-import com.sil.fssswitch.model.WithdrawalRequest;
-import com.sil.fssswitch.model.WithdrawalResponse;
 
 @Component
 public class WithdrawalTransaction {
