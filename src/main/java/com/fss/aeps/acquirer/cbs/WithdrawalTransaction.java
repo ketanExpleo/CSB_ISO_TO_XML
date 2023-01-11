@@ -225,7 +225,7 @@ public class WithdrawalTransaction {
 				}
 
 				if(accountingResponse == null || "91".equalsIgnoreCase(accountingResponse.responseCode)) {
-					cbsClient.acqAccountingCWReversal(transaction);
+					cbsClient.acqAccountingCWReversal(transaction, response);
 					response.getResp().setResult(ResultType.FAILURE);
 					response.getResp().setErrCode("91");
 					request.context.put(ContextKey.ORG_RESP_CODE, "22");

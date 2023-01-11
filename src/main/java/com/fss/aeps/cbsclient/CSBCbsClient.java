@@ -25,8 +25,10 @@ import org.tempuri.Service1;
 import com.fss.aeps.AppConfig;
 import com.fss.aeps.jaxb.AccountDetailType;
 import com.fss.aeps.jaxb.DeviceTagNameType;
+import com.fss.aeps.jaxb.RefType;
 import com.fss.aeps.jaxb.ReqBalEnq;
 import com.fss.aeps.jaxb.ReqPay;
+import com.fss.aeps.jaxb.RespPay;
 import com.fss.aeps.jpa.acquirer.AcquirerTransaction;
 import com.fss.aeps.jpa.issuer.IssuerTransaction;
 import com.fss.aeps.util.DeviceTagMap;
@@ -365,7 +367,7 @@ public class CSBCbsClient implements CbsClient {
 	}
 
 	@Override
-	public Mono<CBSResponse> acqAccountingCWReversal(final AcquirerTransaction transaction) {
+	public Mono<CBSResponse> acqAccountingCWReversal(final AcquirerTransaction transaction, final RespPay respPay) {
 		try {
 			final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			final IService1 service = getService();
@@ -385,8 +387,11 @@ public class CSBCbsClient implements CbsClient {
 			details.Txn_Currency = "INR";
 			details.Txn_Timestamp = sdf.format(transaction.getTxnTs());
 			details.Txn_ID = transaction.getCustRef();
-			//details.Auth_ID = "";
+			details.Auth_ID = respPay.getResp().getRef().stream().filter(f -> f.getType() == RefType.PAYER).findFirst().get().getApprovalNum();
 			details.Reversal_resp_code = "68";
+			details.Orig_Device_ID = deviceTags.get(DeviceTagNameType.CARD_ACC_ID_CODE).substring(7);
+			details.Orig_Txn_ID = transaction.getCustRef();
+			details.Orig_Txn_Timestamp = sdf.format(transaction.getTxnTs());
 			final StringWriter writer = new StringWriter();
 			CONTEXT.createMarshaller().marshal(details, (Writer) writer);
 			final String responseString = service.aepsAadhaarTransaction(writer.toString());
@@ -397,7 +402,8 @@ public class CSBCbsClient implements CbsClient {
 			cbsResponse.customerName = response.Customer_Name;
 			cbsResponse.responseCode = cbsToNpciResponseMapper.map(response.Error_Code);
 			if(cbsResponse.responseCode.length() > 2) cbsResponse.responseCode = "KH";
-			if ("ERR000".equals(response.Error_Code)) {
+			if ("ERR099".equals(response.Error_Code)) {
+				cbsResponse.responseCode = "00";
 				cbsResponse.responseMessage = "SUCCESS";
 			} else {
 				cbsResponse.responseMessage = "FAILURE";

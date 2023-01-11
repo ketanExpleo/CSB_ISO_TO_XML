@@ -138,11 +138,11 @@ public class TFReversalTransaction {
 		reversal.context.put(ContextKey.ACQUIRER_REVERSAL, acquirerReversal);
 		final RespPay respPay = appConfig.context.getBean(RevPaySender.class).send(reversal);
 		logger.info("terminal failure reversal request forwarded to npci : "+respPay.getTxn().getId());
-		final CBSResponse cbsResponse =  cbsClient.acqAccountingCWReversal(acquirerTransaction).block();
+		final CBSResponse cbsResponse =  cbsClient.acqAccountingCWReversal(acquirerTransaction, respPay).block();
 		if(cbsResponse != null) logger.info("Terminal Failure Response fro TxnID : "+reversal.getTxn().getId()+" Response Code : "+cbsResponse.responseCode);
 		if(cbsResponse != null) {
 			response.responseCode = cbsResponse.responseCode;
-			response.respDesc = "REVERSAL SUCCESS";
+			response.respDesc = cbsResponse.responseMessage;
 		}
 		
 		return response;

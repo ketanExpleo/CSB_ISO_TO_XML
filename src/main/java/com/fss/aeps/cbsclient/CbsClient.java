@@ -2,6 +2,7 @@ package com.fss.aeps.cbsclient;
 
 import com.fss.aeps.jaxb.ReqBalEnq;
 import com.fss.aeps.jaxb.ReqPay;
+import com.fss.aeps.jaxb.RespPay;
 import com.fss.aeps.jpa.acquirer.AcquirerTransaction;
 import com.fss.aeps.jpa.issuer.IssuerTransaction;
 
@@ -19,5 +20,5 @@ public interface CbsClient {
 
 	public Mono<CBSResponse> acqAccountingCW(final ReqPay request);
 
-	public Mono<CBSResponse> acqAccountingCWReversal(final AcquirerTransaction transaction);
+	public Mono<CBSResponse> acqAccountingCWReversal(final AcquirerTransaction transaction, final RespPay respPay);
 }
